@@ -14,3 +14,7 @@ Functionality so far:
 Set up basic creation of bench, squat, deadlift, and overall tables in SQLite with Python
 Can currently insert rows with insert_exercise and insert_overall
 Next goal: create methods for removing rows, order rows by date via ORDER_BY, start on tkinter for user to input data
+
+6/8
+Set up basic Tkinter user interface
+Created create_string and create_exercise functions for logging in new exercises input by the user

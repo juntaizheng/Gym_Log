@@ -50,9 +50,32 @@ def insert_overall(conn, overall):
               VALUES(?,?,?,?,?,?,?,?)"""
     cur = conn.cursor()
     cur.execute(sql, overall)
-    print('success')
     return cur.lastrowid
 
+def create_string(exercise):
+    """
+    Creates the necessary SQLite string for creating a new table
+    used in create_exercise
+    """
+    return """CREATE TABLE IF NOT EXISTS """ + exercise + """ (
+                                    date text,
+                                    weight integer,
+                                    sets integer,
+                                    reps integer
+                                );"""
+
+def create_exercise(exercise):
+    """
+    Opens a new connection to the database and creates a table
+    for the exercise. also adds the exercise to the overall table.
+    """
+    conn = create_connection("gym_data.db")
+    if conn is not None:
+        create_table(conn, create_string(exercise.replace(" ", "_")))
+    with conn:
+        insert_overall(conn, (exercise, None, None, None, None
+                                , None, None, None))
+    conn.close()
 
 def main():
     """main function"""
@@ -106,12 +129,14 @@ def main():
         test_b = ('2017-06-10', 1, 1, 1)
         test_s = ('2017-06-10', 1, 1, 1)
         test_d = ('2017-06-10', 1, 1, 1)
-        insert_overall(conn, test_o)
+        """insert_overall(conn, test_o)"""
         insert_exercise(conn, test_b, 'bench')
         insert_exercise(conn, test_s, 'squat')
         insert_exercise(conn, test_d, 'deadlift')
+        
 
     conn.close()
+    create_exercise('bicep curl')
 
 
 if __name__ == '__main__':
