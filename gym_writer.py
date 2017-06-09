@@ -77,6 +77,29 @@ def create_exercise(exercise):
                                 , None, None, None))
     conn.close()
 
+def table_max(exercise):
+    #returns max weight data of exercise
+    conn = create_connection("gym_data.db")
+    if conn is not None:
+        query = """SELECT * FROM """ + exercise + """ ORDER BY weight DESC LIMIT 1"""
+        cur = conn.cursor()
+        max = cur.execute(query).fetchone()
+        conn.close()
+        return max
+    conn.close()
+
+def table_recent(exercise):
+    #returns most recent data of exercise
+    conn = create_connection("gym_data.db")
+    if conn is not None:
+        query = """SELECT * FROM """ + exercise + """ ORDER BY date DESC LIMIT 1"""
+        cur = conn.cursor()
+        recent = cur.execute(query).fetchone()
+        conn.close()
+        return recent
+    conn.close()
+
+
 def main():
     """main function"""
     database = "gym_data.db"
@@ -126,7 +149,7 @@ def main():
         print("Error! cannot create the database connection.")
     with conn:
         test_o = ('bench', '2017-06-10', 1, 1, 1, 1, 1, 1)
-        test_b = ('2017-06-10', 1, 1, 1)
+        test_b = ('2017-06-11', 1, 1, 1)
         test_s = ('2017-06-10', 1, 1, 1)
         test_d = ('2017-06-10', 1, 1, 1)
         """insert_overall(conn, test_o)"""
@@ -136,7 +159,9 @@ def main():
         
 
     conn.close()
-    create_exercise('bicep curl')
+    # test create_exercise('bicep curl')
+    print(table_max('bench'))
+    print(table_recent('bench'))
 
 
 if __name__ == '__main__':
