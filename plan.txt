@@ -18,3 +18,5 @@ Next goal: create methods for removing rows, order rows by date via ORDER_BY, st
 6/8
 Set up basic Tkinter user interface
 Created create_string and create_exercise functions for logging in new exercises input by the user
+Made colors
+Created get_recent and get_max for querying the sqlite tables

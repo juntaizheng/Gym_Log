@@ -2,7 +2,6 @@ from tkinter import *
 import gym_writer
 
 root = Tk()
-root.configure(background="gold")
 root.title("Gym Log")
 
  
@@ -23,16 +22,17 @@ choices = { 'Bench','Squat','Deadlift' }
 tkvar.set('Bench') # set the default option
 
 # for creating a new window for new exercise
-def new_window():
+def new_ex_window():
 	wind = Toplevel()
 	wind.geometry('300x100')
-	Label(wind, text="Exercise Name").grid(row = 0, column = 0)
-	E1 = Entry(wind, bd =5)
-	E1.grid(row=2, column=0)
-	con = Button(wind, text="Confirm", command=wind.destroy)
-	con.grid(row=2, column=2)
-	canc = Button(wind, text="Cancel", command=wind.destroy)
-	canc.grid(row=2, column=3)
+	wind.configure(background = "DodgerBlue3")
+	Label(wind, text="Exercise Name", background="DodgerBlue3").grid(row = 0, column = 0)
+	E1 = Entry(wind)
+	E1.grid(row=1, column=0, columnspan=2)
+	con = Button(wind, text="Confirm", command=wind.destroy, background="snow")
+	con.grid(row=2, column=0, padx = 5, pady = 5)
+	canc = Button(wind, text="Cancel", command=wind.destroy, background="snow")
+	canc.grid(row=2, column=1, padx = 5, pady = 5)
  
 popupMenu = OptionMenu(mainframe, tkvar, *choices)
 popupMenu["menu"].configure(background="snow")
@@ -40,7 +40,7 @@ Label(mainframe, text="Choose an exercise", background="DodgerBlue3").grid(row =
 popupMenu.grid(row = 1, column = 0)
 
 top = None
-B1 = Button(mainframe, text='Create new exercise', command=new_window, background="snow")
+B1 = Button(mainframe, text='Create new exercise', command=new_ex_window, background="snow")
 B1.grid(row = 6, column = 0)
 
 Label(mainframe, text="Last time exercised:", background="DodgerBlue3").grid(row = 0, column = 1)
