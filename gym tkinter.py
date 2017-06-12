@@ -37,6 +37,12 @@ def new_log_window():
 	yearMenu = ttk.OptionMenu(wind, yearTemp, yearTemp.get(), *sorted(year))
 	yearMenu["menu"].configure(background="snow")
 	yearMenu.grid(row = 1, column = 1)
+	yearMenu.configure(width=5)
+
+
+	
+
+	
 
 	#dropdown for month selection
 	month = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'}
@@ -46,6 +52,7 @@ def new_log_window():
 	monthMenu = ttk.OptionMenu(wind, monthTemp, monthTemp.get(), *sorted(month))
 	monthMenu["menu"].configure(background="snow")
 	monthMenu.grid(row = 1, column = 2, padx = 2, pady = 2)
+	monthMenu.configure(width=3)
 
 	#dropdown for day selection
 	#to implement: change inputs dependent on month selection
@@ -57,6 +64,7 @@ def new_log_window():
 	dayMenu = ttk.OptionMenu(wind, dayTemp, dayTemp.get(), *sorted(day))
 	dayMenu["menu"].configure(background="snow")
 	dayMenu.grid(row = 1, column = 3, padx = 2, pady = 2)
+	dayMenu.configure(width=3)
 
 	Label(wind, text="Weight (lb)", background="DodgerBlue3").grid(row = 4, column = 0)
 	E2 = Entry(wind)
@@ -70,10 +78,22 @@ def new_log_window():
 	E4 = Entry(wind)
 	E4.grid(row= 9, column= 0, columnspan= 2)
 
-	con = Button(wind, text="Confirm", command=wind.destroy, background="snow")
+	con = Button(wind, text="Confirm", command=wind.destroy, background="snow", state='disabled')
 	con.grid(row=10, column=0, padx = 2, pady = 2)
 	canc = Button(wind, text="Cancel", command=wind.destroy, background="snow")
 	canc.grid(row=10, column=1, padx = 2, pady = 2)
+
+	def disable(*args):
+		if yearTemp.get() == '----' or monthTemp.get() == '--' or dayTemp.get() == '--':
+			print('year disabled')
+			con.config(state='disabled')
+		else:
+			print('year enabled')
+			con.config(state='normal')
+
+	yearTemp.trace('w', disable)
+	monthTemp.trace('w', disable)
+	dayTemp.trace('w', disable)
 
 # on change dropdown value
 def change_dropdown(*args):
@@ -82,7 +102,7 @@ def change_dropdown(*args):
 
 root = Tk()
 root.title("Gym Log")
-
+#root.grid_propagate(False) 
  
 # Add a grid
 mainframe = Frame(root)
@@ -95,7 +115,8 @@ mainframe.rowconfigure(0, weight = 1)
  
 # Create a Tkinter variable
 tkvar = StringVar(root)
- 
+
+
 # Dictionary with options
 choices = {'Bench','Squat','Deadlift'}
 tkvar.set('Bench') # set the default option
