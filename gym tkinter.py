@@ -77,6 +77,7 @@ def new_log_window():
 		#logs the current exercise
 		gym_writer.log_ex((yearTemp.get() + '-' + monthTemp.get() + '-' + dayTemp.get(),
 			E2.get(), E3.get(), E4.get()), temp.get().lower())
+		#implement: refreshes the overall values if needed
 		wind.destroy()
 
 	con = Button(wind, text="Confirm", command=log, background="snow", state='disabled')
@@ -100,9 +101,7 @@ def new_log_window():
 
 
 
-# on change dropdown value
-def change_dropdown(*args):
-    print( tkvar.get() )
+
 
 
 root = Tk()
@@ -120,6 +119,17 @@ mainframe.rowconfigure(0, weight = 1)
  
 # Create a Tkinter variable
 tkvar = StringVar(root)
+
+# on change dropdown value, refreshes the values on the home window
+def change_dropdown(*args):
+    L1.config(text=gym_writer.table_recent(tkvar.get().lower())[0])
+    L2.config(text=gym_writer.table_recent(tkvar.get().lower())[1])
+    L3.config(text=gym_writer.table_recent(tkvar.get().lower())[2])
+    L4.config(text=gym_writer.table_recent(tkvar.get().lower())[3])
+    L5.config(text=gym_writer.table_max(tkvar.get().lower())[0])
+    L6.config(text=gym_writer.table_max(tkvar.get().lower())[1])
+    L7.config(text=gym_writer.table_max(tkvar.get().lower())[2])
+    L8.config(text=gym_writer.table_max(tkvar.get().lower())[3])
 
 
 # Dictionary with options

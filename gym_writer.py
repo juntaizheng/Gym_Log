@@ -105,8 +105,6 @@ def log_ex(exercise, strn):
     conn = create_connection("gym_data.db")
     with conn:
         insert_exercise(conn, exercise, strn)
-    print('gym log')
-    print(exercise[0])
     conn.close()
 
 def main():
