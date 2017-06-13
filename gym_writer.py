@@ -50,6 +50,7 @@ def insert_overall(conn, overall):
               VALUES(?,?,?,?,?,?,?,?)"""
     cur = conn.cursor()
     cur.execute(sql, overall)
+    conn.commit()
     return cur.lastrowid
 
 def create_string(exercise):
@@ -99,6 +100,14 @@ def table_recent(exercise):
         return recent
     conn.close()
 
+def log_ex(exercise, strn):
+    #creates a connection to the database and logs the appropriate exercise
+    conn = create_connection("gym_data.db")
+    with conn:
+        insert_exercise(conn, exercise, strn)
+    print('gym log')
+    print(exercise[0])
+    conn.close()
 
 def main():
     """main function"""
@@ -149,7 +158,7 @@ def main():
         print("Error! cannot create the database connection.")
     with conn:
         test_o = ('bench', '2017-06-10', 1, 1, 1, 1, 1, 1)
-        test_b = ('2017-06-11', 1, 1, 1)
+        test_b = ('2017-06-12', 1, 1, 1)
         test_s = ('2017-06-10', 1, 1, 1)
         test_d = ('2017-06-10', 1, 1, 1)
         """insert_overall(conn, test_o)"""

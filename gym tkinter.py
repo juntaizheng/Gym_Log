@@ -38,12 +38,7 @@ def new_log_window():
 	yearMenu["menu"].configure(background="snow")
 	yearMenu.grid(row = 1, column = 1)
 	yearMenu.configure(width=5)
-
-
 	
-
-	
-
 	#dropdown for month selection
 	month = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'}
 	Label(wind, text="Month", background="DodgerBlue3").grid(row = 0, column = 2)
@@ -68,7 +63,7 @@ def new_log_window():
 
 	Label(wind, text="Weight (lb)", background="DodgerBlue3").grid(row = 4, column = 0)
 	E2 = Entry(wind)
-	E2.grid(row = 5, column = 0, columnspan = 2)
+	E2.grid(row = 5, column = 0, columnspan = 2) 
 
 	Label(wind, text="Sets", background="DodgerBlue3").grid(row = 6, column = 0)
 	E3 = Entry(wind)
@@ -78,12 +73,19 @@ def new_log_window():
 	E4 = Entry(wind)
 	E4.grid(row= 9, column= 0, columnspan= 2)
 
-	con = Button(wind, text="Confirm", command=wind.destroy, background="snow", state='disabled')
+	def log():
+		#logs the current exercise
+		gym_writer.log_ex((yearTemp.get() + '-' + monthTemp.get() + '-' + dayTemp.get(),
+			E2.get(), E3.get(), E4.get()), temp.get().lower())
+		wind.destroy()
+
+	con = Button(wind, text="Confirm", command=log, background="snow", state='disabled')
 	con.grid(row=10, column=0, padx = 2, pady = 2)
 	canc = Button(wind, text="Cancel", command=wind.destroy, background="snow")
 	canc.grid(row=10, column=1, padx = 2, pady = 2)
 
 	def disable(*args):
+		#disables confirm button if a date input is invalid
 		if yearTemp.get() == '----' or monthTemp.get() == '--' or dayTemp.get() == '--':
 			print('year disabled')
 			con.config(state='disabled')
@@ -94,6 +96,9 @@ def new_log_window():
 	yearTemp.trace('w', disable)
 	monthTemp.trace('w', disable)
 	dayTemp.trace('w', disable)
+
+
+
 
 # on change dropdown value
 def change_dropdown(*args):
