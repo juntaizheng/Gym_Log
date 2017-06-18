@@ -107,6 +107,68 @@ def log_ex(exercise, strn):
         insert_exercise(conn, exercise, strn)
     conn.close()
 
+def initialize():
+    #sets up basic settings if program has not been run before
+    database = "gym_data.db"
+    sql_create_overall_table = """CREATE TABLE IF NOT EXISTS overall (
+                                    exercise text PRIMARY KEY,
+                                    date text,
+                                    recent_weight integer,
+                                    recent_sets integer,
+                                    recent_reps integer,
+                                    max_weight integer,
+                                    max_sets integer,
+                                    max_reps integer
+                                );"""
+
+    sql_create_bench_table = """CREATE TABLE IF NOT EXISTS bench (
+                                    date text,
+                                    weight integer,
+                                    sets integer,
+                                    reps integer
+                                );"""
+
+    sql_create_squat_table = """CREATE TABLE IF NOT EXISTS squat (
+                                    date text,
+                                    weight integer,
+                                    sets integer,
+                                    reps integer
+                                );"""
+
+    sql_create_deadlift_table = """CREATE TABLE IF NOT EXISTS deadlift (
+                                    date text,
+                                    weight integer,
+                                    sets integer,
+                                    reps integer
+                                );"""
+
+    conn = create_connection(database)
+    if conn is not None:
+        # create projects table
+        create_table(conn, sql_create_overall_table)
+        # create bench table
+        create_table(conn, sql_create_bench_table)
+        # create squat table
+        create_table(conn, sql_create_squat_table)
+        # create deadlift table
+        create_table(conn, sql_create_deadlift_table)
+    else:
+        print("Error! cannot create the database connection.")
+
+    conn.close()
+
+def get_exercises():
+    #returns a set of all exercise names stored
+    conn = create_connection("gym_data.db")
+    c = conn.cursor()
+    s = set()
+    for ex in c.execute('SELECT * FROM overall ORDER BY exercise DESC'):
+        s.add(ex[0])
+    conn.close()
+    return s
+
+
+
 def main():
     """main function"""
     database = "gym_data.db"
