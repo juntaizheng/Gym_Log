@@ -43,6 +43,7 @@ def refresh(*args):
         L7.config(text='---')
         L8.config(text='---')
 
+dayMenu = ""
 # for creating a new window for logging
 def new_log_window():
     wind = Toplevel()
@@ -83,6 +84,7 @@ def new_log_window():
     Label(wind, text="Day", background="DodgerBlue3").grid(row = 0, column = 3)
     dayTemp = StringVar(wind)
     dayTemp.set('--')
+    global dayMenu
     dayMenu = ttk.OptionMenu(wind, dayTemp, dayTemp.get(), *sorted(day))
     dayMenu["menu"].configure(background="snow")
     dayMenu.grid(row = 1, column = 3, padx = 2, pady = 2)
@@ -123,9 +125,37 @@ def new_log_window():
         else:
             con.config(state='normal')
 
+    def day_update(*args):
+        #updates the day selection available with a selected month
+        global dayMenu
+        dayTemp.set('')
+        days = set()
+        dayMenu['menu'].delete(0, 'end')
+        if monthTemp.get() == '02' and yearTemp.get().isdigit() and int(yearTemp.get()) % 4 == 0:
+            #leap year
+            days = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
+            '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29'};
+        elif monthTemp.get() == '01' or monthTemp.get() == '03' or monthTemp.get() == '05' or monthTemp.get() == '07' or monthTemp.get() == '08' or monthTemp.get() == '10' or monthTemp.get() == '12':
+            days = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
+            '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'}
+        elif monthTemp.get() == '02':
+            days = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
+            '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28'}
+        else:
+            days = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
+            '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'}
+
+        dayMenu = ttk.OptionMenu(wind, dayTemp, '--', *sorted(days))
+
+        dayMenu["menu"].configure(background="snow")
+        dayMenu.grid(row = 1, column = 3, padx = 2, pady = 2)
+        dayMenu.configure(width=3)
+
     #tracks change in date dropdown menu to enable/disable confirm button
     yearTemp.trace('w', disable)
     monthTemp.trace('w', disable)
+    yearTemp.trace('w', day_update)
+    monthTemp.trace('w', day_update)
     dayTemp.trace('w', disable)
 
     #tracks change in weight, sets, and reps entries to enable/disable confirm button
