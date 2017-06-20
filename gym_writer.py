@@ -70,13 +70,20 @@ def create_exercise(exercise):
     Opens a new connection to the database and creates a table
     for the exercise. also adds the exercise to the overall table.
     """
+    #todo: fix checking for duplicates (handle error in python, not sqlite)
     conn = create_connection("gym_data.db")
     if conn is not None:
-        create_table(conn, create_string(exercise.replace(" ", "_")))
+        tb_exists = "SELECT name FROM sqlite_master WHERE type='table' AND name='spwords'"
+        if not conn.execute(tb_exists).fetchone():
+            create_table(conn, create_string(exercise.lower().replace(" ", "_")))
+        else:
+            conn.close()
+            return False
     with conn:
         insert_overall(conn, (exercise, None, None, None, None
                                 , None, None, None))
     conn.close()
+    return True
 
 def table_max(exercise):
     #returns max weight data of exercise

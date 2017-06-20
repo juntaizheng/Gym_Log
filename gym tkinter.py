@@ -78,7 +78,6 @@ def new_log_window():
     monthMenu.configure(width=3)
 
     #dropdown for day selection
-    #to implement: change inputs dependent on month selection
     day = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
     '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'}
     Label(wind, text="Day", background="DodgerBlue3").grid(row = 0, column = 3)
@@ -164,18 +163,39 @@ def new_log_window():
     reps.trace('w', disable)
 
 # for creating a new window for new exercise
+#todo: update home dropdown page once exercise is logged
 def new_ex_window():
     wind = Toplevel()
     wind.geometry('150x100')
     wind.configure(background = "DodgerBlue3")
-    Label(wind, text="Exercise Name", background="DodgerBlue3").grid(row = 0, column = 0, sticky=W+E+N+S, columnspan = 2)
-    E1 = ttk.Entry(wind)
+    Label(wind, text="Exercise Name", background="DodgerBlue3").grid(row = 0, column = 0, sticky=W+E+N+S, columnspan = 1)
+    ex = StringVar()
+    E1 = ttk.Entry(wind, textvariable=ex)
     E1.grid(row=1, column=0, columnspan=2)
-    #to implement: creation of exercise, rejection if exercise already exists
-    con = ttk.Button(wind, text="Confirm", command=wind.destroy)#, background="snow")
+    def create_ex():
+        #function for creating a new exercise; rejection if exercise already exists
+        if gym_writer.create_exercise(E1.get()):
+            wind.destroy()
+        else:
+            pop = Toplevel()
+            pop.geometry('150x100')
+            pop.configure(background = "DodgerBlue3")
+            Label(pop, text="Error! Exercise already exists.", background="DodgerBlue3").grid(row = 0, column = 0, sticky=W+E+N+S, columnspan = 2)
+            ret = ttk.Button(pop, text="OK", command=pop.destroy)#, background="snow")
+            ret.grid(row = 1, column = 0, sticky=W+E+N+S, columnspan = 2)
+    con = ttk.Button(wind, text="Confirm", command=create_ex, state='disabled')#, background="snow")
     con.grid(row=2, column=0, padx = 5, pady = 5)
     canc = ttk.Button(wind, text="Cancel", command=wind.destroy)#, background="snow")
     canc.grid(row=2, column=1, padx = 5, pady = 5)
+
+    def disable(*args):
+        #disables confirm button if entry is empty or whitespace
+        if E1.get() == '' or E1.get().isspace():
+            con.config(state='disabled')
+        else:
+            con.config(state='normal')
+
+    ex.trace('w', disable)
 
 
 # Dictionary with options
