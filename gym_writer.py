@@ -86,7 +86,6 @@ def create_exercise(exercise):
         #if not conn.execute(tb_exists).fetchone():
         create_table(conn, create_string(exercise.lower().replace(" ", "_")))
         #else:
-        conn.close()
         #return False
     with conn:
         insert_overall(conn, (exercise, None, None, None, None

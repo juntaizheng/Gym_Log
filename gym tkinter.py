@@ -18,6 +18,7 @@ mainframe.rowconfigure(0, weight = 1)
 gym_writer.initialize()
  
 # Create a Tkinter variable
+global tkvar
 tkvar = StringVar(root)
 
 # on change dropdown value or logging new exercise, refreshes the values on the home window
@@ -166,31 +167,43 @@ def new_log_window():
 #todo: update home dropdown page once exercise is logged
 def new_ex_window():
     wind = Toplevel()
-    wind.geometry('150x100')
     wind.configure(background = "DodgerBlue3")
-    Label(wind, text="Exercise Name", background="DodgerBlue3").grid(row = 0, column = 0, sticky=W+E+N+S, columnspan = 1)
+    Label(wind, text="Exercise Name", background="DodgerBlue3").grid(row = 0, column = 0, sticky=W+E+N+S, columnspan = 1, padx = 10, pady = 10)
     ex = StringVar()
     E1 = ttk.Entry(wind, textvariable=ex)
     E1.grid(row=1, column=0, columnspan=2)
+    exercises = gym_writer.getTables()
     def create_ex():
-        #function for creating a new exercise; rejection if exercise already exists
-        if gym_writer.create_exercise(E1.get()):
-            wind.destroy()
-        else:
+    #function for creating a new exercise; rejection if exercise already exists
+        if E1.get().lower().replace(" ", "_") in exercises:
             pop = Toplevel()
-            pop.geometry('150x100')
             pop.configure(background = "DodgerBlue3")
-            Label(pop, text="Error! Exercise already exists.", background="DodgerBlue3").grid(row = 0, column = 0, sticky=W+E+N+S, columnspan = 2)
-            ret = ttk.Button(pop, text="OK", command=pop.destroy)#, background="snow")
-            ret.grid(row = 1, column = 0, sticky=W+E+N+S, columnspan = 2)
+            Label(pop, text="Error! Exercise already exists.", background="DodgerBlue3").grid(row = 0, column = 0, sticky=W+E+N+S, columnspan = 2, padx = 10, pady = 10)
+            ret = ttk.Button(pop, text="OK", command=pop.destroy)
+            ret.grid(row = 1, column = 0, sticky=W+E+N+S, columnspan = 2, padx = 10, pady = 10)
+        else:
+            gym_writer.create_exercise(E1.get())
+            #refreshing of home page exercises to include new exercise
+            global tkvar
+            tkvar.set(ex.get())
+            global popupMenu
+            popupMenu['menu'].delete(0, 'end')
+            global choices
+            choices = gym_writer.get_exercises()
+            popupMenu = ttk.OptionMenu(mainframe, tkvar, tkvar.get(), *sorted(choices))
+            popupMenu.grid(row = 1, column = 0)
+            popupMenu["menu"].configure(background="snow")
+            refresh()
+            wind.destroy()
+            
     con = ttk.Button(wind, text="Confirm", command=create_ex, state='disabled')#, background="snow")
-    con.grid(row=2, column=0, padx = 5, pady = 5)
+    con.grid(row=2, column=0, padx = 10, pady = 10)
     canc = ttk.Button(wind, text="Cancel", command=wind.destroy)#, background="snow")
-    canc.grid(row=2, column=1, padx = 5, pady = 5)
+    canc.grid(row=2, column=1, padx = 10, pady = 10)
 
     def disable(*args):
         #disables confirm button if entry is empty or whitespace
-        if E1.get() == '' or E1.get().isspace():
+        if E1.get() == '' or E1.get().isspace() or E1.get().isdigit():
             con.config(state='disabled')
         else:
             con.config(state='normal')
@@ -199,9 +212,11 @@ def new_ex_window():
 
 
 # Dictionary with options
+global choices
 choices = gym_writer.get_exercises()
 tkvar.set(sorted(choices)[0]) # set the default option
- 
+
+global popupMenu 
 popupMenu = ttk.OptionMenu(mainframe, tkvar, tkvar.get(), *sorted(choices))
 popupMenu["menu"].configure(background="snow")
 Label(mainframe, text="Choose an exercise", background="DodgerBlue3").grid(row = 0, column = 0)
