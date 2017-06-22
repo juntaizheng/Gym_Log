@@ -23,6 +23,15 @@ def create_table(conn, create_table_sql):
     except ValueError as err:
         print(err)
 
+def getTables():
+   #Get a list of all tables
+   conn = create_connection("gym_data.db")
+   cursor = conn.cursor()
+   cmd = "SELECT name FROM sqlite_master WHERE type='table'"
+   cursor.execute(cmd)
+   names = [row[0] for row in cursor.fetchall()]
+   return names
+
 def insert_exercise(conn, exercise, strn):
     """
     Log an exercise into the appropriate exercise table
@@ -73,17 +82,17 @@ def create_exercise(exercise):
     #todo: fix checking for duplicates (handle error in python, not sqlite)
     conn = create_connection("gym_data.db")
     if conn is not None:
-        tb_exists = "SELECT name FROM sqlite_master WHERE type='table' AND name='spwords'"
-        if not conn.execute(tb_exists).fetchone():
-            create_table(conn, create_string(exercise.lower().replace(" ", "_")))
-        else:
-            conn.close()
-            return False
+        #tb_exists = "SELECT name FROM sqlite_master WHERE type='table' AND name='spwords'"
+        #if not conn.execute(tb_exists).fetchone():
+        create_table(conn, create_string(exercise.lower().replace(" ", "_")))
+        #else:
+        conn.close()
+        #return False
     with conn:
         insert_overall(conn, (exercise, None, None, None, None
                                 , None, None, None))
     conn.close()
-    return True
+    #return True
 
 def table_max(exercise):
     #returns max weight data of exercise
