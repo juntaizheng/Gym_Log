@@ -15,7 +15,8 @@ mainframe.columnconfigure(0, weight = 1)
 mainframe.rowconfigure(0, weight = 1)
 
 #initialize a database with bench, deadlift, and squats if not created before
-gym_writer.initialize()
+if len(gym_writer.get_exercises()) == 0:
+    gym_writer.initialize()
  
 # Create a Tkinter variable
 global tkvar
@@ -196,12 +197,12 @@ def new_ex_window():
             refresh()
             wind.destroy()
             
-    con = ttk.Button(wind, text="Confirm", command=create_ex, state='disabled')#, background="snow")
+    con = ttk.Button(wind, text="Confirm", command=create_ex, state='disabled')
     con.grid(row=2, column=0, padx = 10, pady = 10)
-    canc = ttk.Button(wind, text="Cancel", command=wind.destroy)#, background="snow")
+    canc = ttk.Button(wind, text="Cancel", command=wind.destroy)
     canc.grid(row=2, column=1, padx = 10, pady = 10)
 
-    def disable(*args):
+    def disable(*args):  
         #disables confirm button if entry is empty or whitespace
         if E1.get() == '' or E1.get().isspace() or E1.get().isdigit():
             con.config(state='disabled')
@@ -229,36 +230,38 @@ B2 = ttk.Button(mainframe, text='Log exercise', command=new_log_window)#, backgr
 B2.grid(row = 4, column = 0)
 
 Label(mainframe, text="Last time exercised:", background="DodgerBlue3").grid(row = 0, column = 1)
-L1 = Label(mainframe, text=gym_writer.table_recent('bench')[0], background="DodgerBlue3")
+L1 = Label(mainframe, background="DodgerBlue3")
 L1.grid(row = 1, column = 1)
 
 Label(mainframe, text="Last time weight", background="DodgerBlue3").grid(row = 2, column = 1)
-L2 = Label(mainframe, text=str(gym_writer.table_recent('bench')[1]) + ' lb', background="DodgerBlue3")
+L2 = Label(mainframe, background="DodgerBlue3")
 L2.grid(row = 3, column = 1)
 
 Label(mainframe, text="Last time sets", background="DodgerBlue3").grid(row = 4, column = 1)
-L3 = Label(mainframe, text=gym_writer.table_recent('bench')[2], background="DodgerBlue3")
+L3 = Label(mainframe, background="DodgerBlue3")
 L3.grid(row = 5, column = 1)
 
 Label(mainframe, text="Last time reps", background="DodgerBlue3").grid(row = 6, column = 1)
-L4 = Label(mainframe, text=gym_writer.table_recent('bench')[3], background="DodgerBlue3")
+L4 = Label(mainframe, background="DodgerBlue3")
 L4.grid(row = 7, column = 1)
 
 Label(mainframe, text="Max weight date", background="DodgerBlue3").grid(row = 0, column = 2)
-L5 = Label(mainframe, text=gym_writer.table_max('bench')[0], background="DodgerBlue3")
+L5 = Label(mainframe, background="DodgerBlue3")
 L5.grid(row = 1, column = 2)
 
 Label(mainframe, text="Max weight", background="DodgerBlue3").grid(row = 2, column = 2)
-L6 = Label(mainframe, text=str(gym_writer.table_max('bench')[1]) + ' lb', background="DodgerBlue3")
+L6 = Label(mainframe, background="DodgerBlue3")
 L6.grid(row = 3, column = 2)
 
 Label(mainframe, text="Max weight sets", background="DodgerBlue3").grid(row = 4, column = 2)
-L7 = Label(mainframe, text=gym_writer.table_max('bench')[2], background="DodgerBlue3")
+L7 = Label(mainframe, background="DodgerBlue3")
 L7.grid(row = 5, column = 2)
 
 Label(mainframe, text="Max weight reps", background="DodgerBlue3").grid(row = 6, column = 2)
-L8 = Label(mainframe, text=gym_writer.table_max('bench')[3], background="DodgerBlue3")
+L8 = Label(mainframe, background="DodgerBlue3")
 L8.grid(row = 7, column = 2)
+
+refresh()
 
 # link function to change dropdown
 tkvar.trace('w', refresh)

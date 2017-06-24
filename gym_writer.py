@@ -79,7 +79,6 @@ def create_exercise(exercise):
     Opens a new connection to the database and creates a table
     for the exercise. also adds the exercise to the overall table.
     """
-    #todo: fix checking for duplicates (handle error in python, not sqlite)
     conn = create_connection("gym_data.db")
     if conn is not None:
         #tb_exists = "SELECT name FROM sqlite_master WHERE type='table' AND name='spwords'"
@@ -158,7 +157,7 @@ def initialize():
                                 );"""
 
     conn = create_connection(database)
-    if conn is not None:
+    """if conn is not None:
         # create projects table
         create_table(conn, sql_create_overall_table)
         # create bench table
@@ -168,7 +167,12 @@ def initialize():
         # create deadlift table
         create_table(conn, sql_create_deadlift_table)
     else:
-        print("Error! cannot create the database connection.")
+        print("Error! cannot create the database connection.")"""
+    create_table(conn, sql_create_overall_table)
+    create_exercise('bench')
+    create_exercise('squat')
+    create_exercise('deadlift')
+
 
     conn.close()
 
@@ -185,7 +189,7 @@ def get_exercises():
 
 
 def main():
-    """main function"""
+    """main function meant for testing"""
     database = "gym_data.db"
     sql_create_overall_table = """CREATE TABLE IF NOT EXISTS overall (
                                     exercise text PRIMARY KEY,
