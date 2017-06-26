@@ -211,6 +211,32 @@ def new_ex_window():
 
     ex.trace('w', disable)
 
+def new_view_window():
+    #creates window for viewing exercises
+    #todo: buttons to sort the table by weight or date, high to low or low to high
+    wind = Toplevel()
+    wind.configure(background = "DodgerBlue3")
+    tree = ttk.Treeview(wind)
+    tree.grid(sticky = (N,S,W,E))
+    wind.treeview = tree
+    wind.grid_rowconfigure(0, weight = 1)
+    wind.grid_columnconfigure(0, weight = 1)
+    treeScroll = ttk.Scrollbar(wind)
+    treeScroll.configure(command=tree.yview)
+    tree.configure(yscrollcommand=treeScroll.set)
+    tree['columns'] = ('Weight', 'Sets', 'Reps')
+    tree.heading("#0", text='Date', anchor='w')
+    tree.column("#0", anchor="w")
+    tree.heading('Weight', text='Weight (lb)')
+    tree.column('Weight', anchor='center', width=100)
+    tree.heading('Sets', text='Sets')
+    tree.column('Sets', anchor='center', width=100)
+    tree.heading('Reps', text='Reps')
+    tree.column('Reps', anchor='center', width=100)
+    for exercise in gym_writer.get_workouts(tkvar.get()):
+        wind.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
+                             exercise[2], exercise[3]))
+
 
 # Dictionary with options
 global choices
@@ -229,7 +255,10 @@ B1.grid(row = 6, column = 0)
 B2 = ttk.Button(mainframe, text='Log exercise', command=new_log_window)#, background="snow")
 B2.grid(row = 4, column = 0)
 
-Label(mainframe, text="Last time exercised:", background="DodgerBlue3").grid(row = 0, column = 1)
+B0 = ttk.Button(mainframe, text='View log', command=new_view_window)#, background="snow")
+B0.grid(row = 2, column = 0, pady = (10,0))
+
+Label(mainframe, text="Last time exercised", background="DodgerBlue3").grid(row = 0, column = 1)
 L1 = Label(mainframe, background="DodgerBlue3")
 L1.grid(row = 1, column = 1)
 

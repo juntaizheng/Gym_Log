@@ -32,6 +32,15 @@ def getTables():
    names = [row[0] for row in cursor.fetchall()]
    return names
 
+def get_workouts(exercise):
+    #gets all the logged workouts of a specific exercise by date
+    conn = create_connection("gym_data.db")
+    with conn:
+        cursor = conn.cursor()
+        cmd = """SELECT * FROM """ + exercise + """ ORDER BY date DESC"""
+        cursor.execute(cmd)
+        return cursor.fetchall()
+
 def insert_exercise(conn, exercise, strn):
     """
     Log an exercise into the appropriate exercise table
