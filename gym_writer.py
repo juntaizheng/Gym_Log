@@ -32,12 +32,21 @@ def getTables():
    names = [row[0] for row in cursor.fetchall()]
    return names
 
-def get_workouts(exercise):
-    #gets all the logged workouts of a specific exercise by date
+def get_dworkouts(exercise):
+    #gets all the logged workouts of a specific exercise by date in descending order
     conn = create_connection("gym_data.db")
     with conn:
         cursor = conn.cursor()
         cmd = """SELECT * FROM """ + exercise + """ ORDER BY date DESC"""
+        cursor.execute(cmd)
+        return cursor.fetchall()
+
+def get_wworkouts(exercise):
+    #gets all the logged workouts of a specific exercise by weight in descending order
+    conn = create_connection("gym_data.db")
+    with conn:
+        cursor = conn.cursor()
+        cmd = """SELECT * FROM """ + exercise + """ ORDER BY weight DESC"""
         cursor.execute(cmd)
         return cursor.fetchall()
 

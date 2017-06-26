@@ -165,7 +165,6 @@ def new_log_window():
     reps.trace('w', disable)
 
 # for creating a new window for new exercise
-#todo: update home dropdown page once exercise is logged
 def new_ex_window():
     wind = Toplevel()
     wind.configure(background = "DodgerBlue3")
@@ -213,11 +212,10 @@ def new_ex_window():
 
 def new_view_window():
     #creates window for viewing exercises
-    #todo: buttons to sort the table by weight or date, high to low or low to high
     wind = Toplevel()
     wind.configure(background = "DodgerBlue3")
     tree = ttk.Treeview(wind)
-    tree.grid(sticky = (N,S,W,E))
+    tree.grid(sticky = (N,S,W,E), rowspan=5)
     wind.treeview = tree
     wind.grid_rowconfigure(0, weight = 1)
     wind.grid_columnconfigure(0, weight = 1)
@@ -233,9 +231,53 @@ def new_view_window():
     tree.column('Sets', anchor='center', width=100)
     tree.heading('Reps', text='Reps')
     tree.column('Reps', anchor='center', width=100)
-    for exercise in gym_writer.get_workouts(tkvar.get()):
+    #defaults to viewing most recent exercises
+    for exercise in gym_writer.get_dworkouts(tkvar.get()):
         wind.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
                              exercise[2], exercise[3]))
+    order = Label(wind, text="Ordered by: \nmost recent" , background="DodgerBlue3")
+    order.grid(row = 0, column = 1, sticky = (N,S,W,E))
+
+    def mrecent():
+        #for ordering table by most recent workouts
+        tree.delete(*tree.get_children())
+        for exercise in gym_writer.get_dworkouts(tkvar.get()):
+            wind.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
+                             exercise[2], exercise[3]))
+        order.configure(text = "Ordered by: \nmost recent")
+
+    def lrecent():
+        #for ordering table by least recent workouts
+        tree.delete(*tree.get_children())
+        for exercise in gym_writer.get_dworkouts(tkvar.get()):
+            wind.treeview.insert('', 0, text=exercise[0], values=(exercise[1],
+                             exercise[2], exercise[3]))
+        order.configure(text = "Ordered by: \nleast recent")
+
+    def heavy():
+        #for ordering table by greatest weight
+        tree.delete(*tree.get_children())
+        for exercise in gym_writer.get_wworkouts(tkvar.get()):
+            wind.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
+                             exercise[2], exercise[3]))
+        order.configure(text = "Ordered by: \nhighest weight")
+
+    def light():
+        #for ordering table by least weight
+        tree.delete(*tree.get_children())
+        for exercise in gym_writer.get_wworkouts(tkvar.get()):
+            wind.treeview.insert('', 0, text=exercise[0], values=(exercise[1],
+                             exercise[2], exercise[3]))
+        order.configure(text = "Ordered by: \nlowest weight")
+
+    b0 = ttk.Button(wind, text='Order by most recent', command=mrecent)
+    b0.grid(row = 1, column = 1, sticky = (N,S,W,E))
+    b1 = ttk.Button(wind, text='Order by least recent', command=lrecent)
+    b1.grid(row = 2, column = 1, sticky = (N,S,W,E))
+    b2 = ttk.Button(wind, text='Order by greatest weight', command=heavy)
+    b2.grid(row = 3, column = 1, sticky = (N,S,W,E))
+    b3 = ttk.Button(wind, text='Order by least weight', command=light)
+    b3.grid(row = 4, column = 1, sticky = (N,S,W,E))
 
 
 # Dictionary with options
