@@ -7,11 +7,11 @@ def main():
     if len(gym_writer.get_exercises()) == 0:
         gym_writer.initialize()
     root.title("Gym Log")
-    app = home(root)
+    app = Home(root)
     root.mainloop()
 
-class home:
-    #main home page of application
+class Home:
+    #main home page of application, combined as a controller
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(self.master)
@@ -97,12 +97,132 @@ class home:
             self.L8.config(text='---')
 
     def new_log_window(self):
-        return None
+        self.newWindow = tk.Toplevel(self.master)
+        self.app = Log_window(self.newWindow, self)
     def new_ex_window(self):
         return None
     def new_view_window(self):
         return None
 
+
+class Log_window:
+    def __init__(self, master, controller):
+        self.master = master
+        self.controller = controller
+        self.frame = tk.Frame(self.master)
+        self.master.geometry('300x300')
+        self.master.configure(background = "DodgerBlue3")
+        tk.Label(self.master, text="Exercise Name", background="DodgerBlue3").grid(row = 0, column = 0)
+        self.temp = tk.StringVar(self.master)
+        self.temp.set(controller.tkvar.get())
+        self.popupMenu = ttk.OptionMenu(self.master, self.temp, self.temp.get(), *sorted(controller.choices))
+        self.popupMenu["menu"].configure(background="snow")
+        tk.Label(self.master, text="Choose an exercise", background="DodgerBlue3").grid(row = 0, column = 0)
+        self.popupMenu.grid(row = 1, column = 0)
+
+        #dropdown for year selections
+        self.year = {'----', '2017', '2018', '2019', '2020'}
+        tk.Label(self.master, text="Year", background="DodgerBlue3").grid(row = 0, column = 1)
+        self.yearTemp = tk.StringVar(self.master)
+        self.yearTemp.set('----')
+        self.yearMenu = ttk.OptionMenu(self.master, self.yearTemp, self.yearTemp.get(), *sorted(self.year))
+        self.yearMenu["menu"].configure(background="snow")
+        self.yearMenu.grid(row = 1, column = 1)
+        self.yearMenu.configure(width=5)
+        
+        #dropdown for month selection
+        self.month = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'}
+        tk.Label(self.master, text="Month", background="DodgerBlue3").grid(row = 0, column = 2)
+        self.monthTemp = tk.StringVar(self.master)
+        self.monthTemp.set('--')
+        self.monthMenu = ttk.OptionMenu(self.master, self.monthTemp, self.monthTemp.get(), *sorted(self.month))
+        self.monthMenu["menu"].configure(background="snow")
+        self.monthMenu.grid(row = 1, column = 2, padx = 2, pady = 2)
+        self.monthMenu.configure(width=3)
+
+        #dropdown for day selection
+        self.day = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
+        '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'}
+        tk.Label(self.frame, text="Day", background="DodgerBlue3").grid(row = 0, column = 3)
+        self.dayTemp = tk.StringVar(self.master)
+        self.dayTemp.set('--')
+        #global dayMenu
+        self.dayMenu = ttk.OptionMenu(self.master, self.dayTemp, self.dayTemp.get(), *sorted(self.day))
+        self.dayMenu["menu"].configure(background="snow")
+        self.dayMenu.grid(row = 1, column = 3, padx = 2, pady = 2)
+        self.dayMenu.configure(width=3)
+
+        tk.Label(self.master, text="Weight (lb)", background="DodgerBlue3").grid(row = 4, column = 0)
+        self.weight = tk.StringVar()
+        self.E2 = tk.Entry(self.master, textvariable=self.weight)
+        self.E2.grid(row = 5, column = 0, columnspan = 2) 
+
+        tk.Label(self.master, text="Sets", background="DodgerBlue3").grid(row = 6, column = 0)
+        self.sets = tk.StringVar()
+        self.E3 = tk.Entry(self.master, textvariable=self.sets)
+        self.E3.grid(row= 7, column = 0, columnspan= 2)
+
+        tk.Label(self.master, text="Reps", background="DodgerBlue3").grid(row = 8, column = 0)
+        self.reps = tk.StringVar()
+        self.E4 = tk.Entry(self.master, textvariable=self.reps)
+        self.E4.grid(row= 9, column= 0, columnspan= 2)
+
+        self.con = ttk.Button(self.master, text="Confirm", command=self.log, state='disabled')
+        self.con.grid(row=10, column=0, padx = 2, pady = 2)
+        self.canc = ttk.Button(self.master, text="Cancel", command=self.master.destroy)
+        self.canc.grid(row=10, column=1, padx = 2, pady = 2)
+
+        #tracks change in date dropdown menu to enable/disable confirm ttk.button
+        self.yearTemp.trace('w',self.disable)
+        self.monthTemp.trace('w', self.disable)
+        self.yearTemp.trace('w', self.day_update)
+        self.monthTemp.trace('w', self.day_update)
+        self.dayTemp.trace('w', self.disable)
+
+        #tracks change in weight, sets, and reps entries to enable/disable confirm ttk.button
+        self.weight.trace('w', self.disable)
+        self.sets.trace('w', self.disable)
+        self.reps.trace('w', self.disable)
+
+    def log(self):
+        #logs the current exercise
+        gym_writer.log_ex((self.yearTemp.get() + '-' + self.monthTemp.get() + '-' + self.dayTemp.get(),
+            self.E2.get(), self.E3.get(), self.E4.get()), self.temp.get().lower())
+        #refreshes the overall values if needed
+        self.controller.refresh()
+        self.master.destroy()
+
+    def disable(self, *args):
+        #disables confirm ttk.button if a date, weight, set, or rep input is invalid
+        if self.yearTemp.get() == '----' or self.monthTemp.get() == '--' or self.dayTemp.get() == '--' or not self.E2.get().isdigit() or not self.E3.get().isdigit() or not self.E4.get().isdigit():
+            self.con.config(state='disabled')
+        else:
+            self.con.config(state='normal')
+
+    def day_update(self, *args):
+        #updates the day selection available with a selected self.month
+        #global dayMenu
+        self.dayTemp.set('')
+        self.days = set()
+        self.dayMenu['menu'].delete(0, 'end')
+        if self.monthTemp.get() == '02' and self.yearTemp.get().isdigit() and int(self.yearTemp.get()) % 4 == 0:
+            #leap year
+            self.days = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
+            '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29'};
+        elif self.monthTemp.get() == '01' or self.monthTemp.get() == '03' or self.monthTemp.get() == '05' or self.monthTemp.get() == '07' or self.monthTemp.get() == '08' or self.monthTemp.get() == '10' or self.monthTemp.get() == '12':
+            self.days = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
+            '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'}
+        elif self.monthTemp.get() == '02':
+            self.days = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
+            '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28'}
+        else:
+            self.days = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
+            '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'}
+
+        self.dayMenu = ttk.OptionMenu(self.master, self.dayTemp, '--', *sorted(self.days))
+        self.dayMenu["menu"].configure(background="snow")
+        self.dayMenu.grid(row = 1, column = 3, padx = 2, pady = 2)
+        self.dayMenu.configure(width=3)
 
 
 
