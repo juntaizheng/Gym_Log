@@ -97,12 +97,13 @@ class Home:
             self.L8.config(text='---')
 
     def new_log_window(self):
-        self.newWindow = tk.Toplevel(self.master)
-        self.app = Log_window(self.newWindow, self)
+        self.newLogWindow = tk.Toplevel(self.master)
+        self.app = Log_window(self.newLogWindow, self)
     def new_ex_window(self):
         return None
     def new_view_window(self):
-        return None
+        self.newViewWindow = tk.Toplevel(self.master)
+        self.app = View_window(self.newViewWindow, self)
 
 
 class Log_window:
@@ -225,7 +226,78 @@ class Log_window:
         self.dayMenu.configure(width=3)
 
 
+class View_window:
+    def __init__(self, master, controller):
+        self.master = master
+        self.controller = controller
+        self.frame = tk.Frame(self.master)
+        self.master.configure(background = "DodgerBlue3")
+        self.tree = ttk.Treeview(self.master)
+        self.tree.grid(sticky = 'news', rowspan=5)
+        self.master.treeview = self.tree
+        self.master.grid_rowconfigure(0, weight = 1)
+        self.master.grid_columnconfigure(0, weight = 1)
+        self.treeScroll = ttk.Scrollbar(self.master)
+        self.treeScroll.configure(command=self.tree.yview)
+        self.tree.configure(yscrollcommand=self.treeScroll.set)
+        self.tree['columns'] = ('Weight', 'Sets', 'Reps')
+        self.tree.heading("#0", text='Date', anchor='w')
+        self.tree.column("#0", anchor="w")
+        self.tree.heading('Weight', text='Weight (lb)')
+        self.tree.column('Weight', anchor='center', width=100)
+        self.tree.heading('Sets', text='Sets')
+        self.tree.column('Sets', anchor='center', width=100)
+        self.tree.heading('Reps', text='Reps')
+        self.tree.column('Reps', anchor='center', width=100)
+        #defaults to viewing most recent exercises
+        for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
+            self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
+                                 exercise[2], exercise[3]))
+        self.order =tk.Label(self.master, text="Ordered by: \nmost recent" , background="DodgerBlue3")
+        self.order.grid(row = 0, column = 1, sticky = 'news')
 
+        def mrecent():
+            #for ordering table by most recent workouts
+            self.tree.delete(*self.tree.get_children())
+            for exercise in gym_writer.get_dworkouts(controller.tkvar.get()):
+                self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
+                                 exercise[2], exercise[3]))
+            self.order.configure(text = "Ordered by: \nmost recent")
+
+        def lrecent():
+            #for ordering table by least recent workouts
+            self.tree.delete(*self.tree.get_children())
+            for exercise in gym_writer.get_dworkouts(controller.tkvar.get()):
+                self.master.treeview.insert('', 0, text=exercise[0], values=(exercise[1],
+                                 exercise[2], exercise[3]))
+            self.order.configure(text = "Ordered by: \nleast recent")
+
+        def heavy():
+            #for ordering table by greatest weight
+            self.tree.delete(*self.tree.get_children())
+            for exercise in gym_writer.get_wworkouts(controller.tkvar.get()):
+                self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
+                                 exercise[2], exercise[3]))
+            self.order.configure(text = "Ordered by: \nhighest weight")
+
+        def light():
+            #for ordering table by least weight
+            self.tree.delete(*self.tree.get_children())
+            for exercise in gym_writer.get_wworkouts(controller.tkvar.get()):
+                self.master.treeview.insert('', 0, text=exercise[0], values=(exercise[1],
+                                 exercise[2], exercise[3]))
+            self.order.configure(text = "Ordered by: \nlowest weight")
+
+        self.b0 = ttk.Button(self.master, text='Order by most recent', command=mrecent)
+        self.b0.grid(row = 1, column = 1, sticky = 'news')
+        self.b1 = ttk.Button(self.master, text='Order by least recent', command=lrecent)
+        self.b1.grid(row = 2, column = 1, sticky = 'news')
+        self.b2 = ttk.Button(self.master, text='Order by greatest weight', command=heavy)
+        self.b2.grid(row = 3, column = 1, sticky = 'news')
+        self.b3 = ttk.Button(self.master, text='Order by least weight', command=light)
+        self.b3.grid(row = 4, column = 1, sticky = 'news')
+
+        
 
 
 
