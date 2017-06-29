@@ -68,6 +68,7 @@ class Home:
         self.L8 = tk.Label(self.frame, background="DodgerBlue3")
         self.L8.grid(row = 7, column = 2)
 
+        #initates values for loaded exercise
         self.refresh()
 
         # link function to change dropdown
@@ -257,46 +258,46 @@ class View_window:
         self.order =tk.Label(self.master, text="Ordered by: \nmost recent" , background="DodgerBlue3")
         self.order.grid(row = 0, column = 1, sticky = 'news')
 
-        def mrecent():
-            #for ordering table by most recent workouts
-            self.tree.delete(*self.tree.get_children())
-            for exercise in gym_writer.get_dworkouts(controller.tkvar.get()):
-                self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
-                                 exercise[2], exercise[3]))
-            self.order.configure(text = "Ordered by: \nmost recent")
-
-        def lrecent():
-            #for ordering table by least recent workouts
-            self.tree.delete(*self.tree.get_children())
-            for exercise in gym_writer.get_dworkouts(controller.tkvar.get()):
-                self.master.treeview.insert('', 0, text=exercise[0], values=(exercise[1],
-                                 exercise[2], exercise[3]))
-            self.order.configure(text = "Ordered by: \nleast recent")
-
-        def heavy():
-            #for ordering table by greatest weight
-            self.tree.delete(*self.tree.get_children())
-            for exercise in gym_writer.get_wworkouts(controller.tkvar.get()):
-                self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
-                                 exercise[2], exercise[3]))
-            self.order.configure(text = "Ordered by: \nhighest weight")
-
-        def light():
-            #for ordering table by least weight
-            self.tree.delete(*self.tree.get_children())
-            for exercise in gym_writer.get_wworkouts(controller.tkvar.get()):
-                self.master.treeview.insert('', 0, text=exercise[0], values=(exercise[1],
-                                 exercise[2], exercise[3]))
-            self.order.configure(text = "Ordered by: \nlowest weight")
-
-        self.b0 = ttk.Button(self.master, text='Order by most recent', command=mrecent)
+        self.b0 = ttk.Button(self.master, text='Order by most recent', command=self.mrecent)
         self.b0.grid(row = 1, column = 1, sticky = 'news')
-        self.b1 = ttk.Button(self.master, text='Order by least recent', command=lrecent)
+        self.b1 = ttk.Button(self.master, text='Order by least recent', command=self.lrecent)
         self.b1.grid(row = 2, column = 1, sticky = 'news')
-        self.b2 = ttk.Button(self.master, text='Order by greatest weight', command=heavy)
+        self.b2 = ttk.Button(self.master, text='Order by greatest weight', command=self.heavy)
         self.b2.grid(row = 3, column = 1, sticky = 'news')
-        self.b3 = ttk.Button(self.master, text='Order by least weight', command=light)
+        self.b3 = ttk.Button(self.master, text='Order by least weight', command=self.light)
         self.b3.grid(row = 4, column = 1, sticky = 'news')
+
+    def mrecent(self):
+        #for ordering table by most recent workouts
+        self.tree.delete(*self.tree.get_children())
+        for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
+           self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
+                            exercise[2], exercise[3]))
+        self.order.configure(text = "Ordered by: \nmost recent")
+
+    def lrecent(self):
+        #for ordering table by least recent workouts
+        self.tree.delete(*self.tree.get_children())
+        for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
+            self.master.treeview.insert('', 0, text=exercise[0], values=(exercise[1],
+                             exercise[2], exercise[3]))
+        self.order.configure(text = "Ordered by: \nleast recent")
+
+    def heavy(self):
+       #for ordering table by greatest weight
+        self.tree.delete(*self.tree.get_children())
+        for exercise in gym_writer.get_wworkouts(self.controller.tkvar.get()):
+           self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
+                             exercise[2], exercise[3]))
+        self.order.configure(text = "Ordered by: \nhighest weight")
+
+    def light(self):
+        #for ordering table by least weight
+        self.tree.delete(*self.tree.get_children())
+        for exercise in gym_writer.get_wworkouts(self.controller.tkvar.get()):
+            self.master.treeview.insert('', 0, text=exercise[0], values=(exercise[1],
+                             exercise[2], exercise[3]))
+        self.order.configure(text = "Ordered by: \nlowest weight")    
 
         
 class Ex_window:
