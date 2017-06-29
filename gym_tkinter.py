@@ -98,12 +98,13 @@ class Home:
 
     def new_log_window(self):
         self.newLogWindow = tk.Toplevel(self.master)
-        self.app = Log_window(self.newLogWindow, self)
+        self.app1 = Log_window(self.newLogWindow, self)
     def new_ex_window(self):
-        return None
+        self.newExWindow = tk.Toplevel(self.master)
+        self.app2 = Ex_window(self.newExWindow, self)
     def new_view_window(self):
         self.newViewWindow = tk.Toplevel(self.master)
-        self.app = View_window(self.newViewWindow, self)
+        self.app3 = View_window(self.newViewWindow, self)
 
 
 class Log_window:
@@ -296,6 +297,53 @@ class View_window:
         self.b2.grid(row = 3, column = 1, sticky = 'news')
         self.b3 = ttk.Button(self.master, text='Order by least weight', command=light)
         self.b3.grid(row = 4, column = 1, sticky = 'news')
+
+        
+class Ex_window:
+    def __init__(self, master, controller):
+        self.master = master
+        self.controller = controller
+        self.frame = tk.Frame(self.master)
+        self.master.configure(background = "DodgerBlue3")
+        tk.Label(self.master, text="Exercise Name", background="DodgerBlue3").grid(row = 0, column = 0, sticky='news', columnspan = 1, padx = 10, pady = 10)
+        self.ex = tk.StringVar()
+        self.E1 = ttk.Entry(self.master, textvariable=self.ex)
+        self.E1.grid(row=1, column=0, columnspan=2)
+        self.exercises = gym_writer.getTables()
+
+        self.con = ttk.Button(self.master, text="Confirm", command=self.create_ex, state='disabled')
+        self.con.grid(row=2, column=0, padx = 10, pady = 10)
+        self.canc = ttk.Button(self.master, text="Cancel", command=self.master.destroy)
+        self.canc.grid(row=2, column=1, padx = 10, pady = 10)
+
+        self.ex.trace('w', self.disable)
+
+    def disable(self, *args):  
+    #disables confirm button if entry is empty or whitespace
+        if self.E1.get() == '' or self.E1.get().isspace() or self.E1.get().isdigit():
+            self.con.config(state='disabled')
+        else:
+            self.con.config(state='normal')
+
+    def create_ex(self):
+    #function for creating a new exercise; rejection if exercise already exists
+        if self.E1.get().lower().replace(" ", "_") in self.exercises:
+            pop = tk.Toplevel()
+            pop.configure(background = "DodgerBlue3")
+            tk.Label(pop, text="Error! Exercise already exists.", background="DodgerBlue3").grid(row = 0, column = 0, sticky='news', columnspan = 2, padx = 10, pady = 10)
+            ret = ttk.Button(pop, text="OK", command=pop.destroy)
+            ret.grid(row = 1, column = 0, sticky='news', columnspan = 2, padx = 10, pady = 10)
+        else:
+            gym_writer.create_exercise(self.E1.get())
+            #refreshing of home page exercises to include new exercise
+            self.controller.tkvar.set(self.ex.get())
+            self.controller.popupMenu['menu'].delete(0, 'end')
+            self.controller.choices = gym_writer.get_exercises()
+            self.controller.popupMenu = ttk.OptionMenu(self.controller.frame, self.controller.tkvar, self.controller.tkvar.get(), *sorted(self.controller.choices))
+            self.controller.popupMenu.grid(row = 1, column = 0)
+            self.controller.popupMenu["menu"].configure(background="snow")
+            self.controller.refresh()
+            self.master.destroy()
 
         
 
