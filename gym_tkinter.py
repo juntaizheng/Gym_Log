@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 import gym_writer
+from numpy import *
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 
 def main(): 
     root = tk.Tk()
@@ -267,6 +270,26 @@ class View_window:
         self.b3 = ttk.Button(self.master, text='Order by least weight', command=self.light)
         self.b3.grid(row = 4, column = 1, sticky = 'news')
 
+        f = Figure(figsize=(5, 4), dpi=100)
+        a = f.add_subplot(111)
+        t = arange(0.0, 3.0, 0.01)
+        s = sin(2*pi*t)
+
+        a.plot(t, s)
+
+
+        # a tk.DrawingArea
+        self.canvas = FigureCanvasTkAgg(f, master=self.master)
+        self.canvas.show()
+        self.canvas.get_tk_widget().grid(row=5,column=0)
+        self.toolbarFrame = tk.Frame(self.master)
+        self.toolbarFrame.grid(row=6,column=0, sticky='news')
+        toolbar = NavigationToolbar2TkAgg(self.canvas, self.toolbarFrame)
+        toolbar.update()
+        toolbar.pack(side=tk.LEFT, expand=1)
+        self.canvas._tkcanvas.grid(row=5,column=0)
+
+
     def mrecent(self):
         #for ordering table by most recent workouts
         self.tree.delete(*self.tree.get_children())
@@ -297,8 +320,9 @@ class View_window:
         for exercise in gym_writer.get_wworkouts(self.controller.tkvar.get()):
             self.master.treeview.insert('', 0, text=exercise[0], values=(exercise[1],
                              exercise[2], exercise[3]))
-        self.order.configure(text = "Ordered by: \nlowest weight")    
+        self.order.configure(text = "Ordered by: \nlowest weight")
 
+    
         
 class Ex_window:
     def __init__(self, master, controller):
