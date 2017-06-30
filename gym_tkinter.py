@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import gym_writer
-from numpy import *
+import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 
@@ -272,16 +272,19 @@ class View_window:
 
         f = Figure(figsize=(5, 4), dpi=100)
         a = f.add_subplot(111)
-        t = arange(0.0, 3.0, 0.01)
-        s = sin(2*pi*t)
+        t = np.arange(0.0, len(gym_writer.get_wworkouts(self.controller.tkvar.get())))
+        s = []
+        for exercise in gym_writer.get_wworkouts(self.controller.tkvar.get()):
+            s.insert(0, exercise[1])
 
-        a.plot(t, s)
+        a.plot(t, np.array(s))
 
 
         # a tk.DrawingArea
         self.canvas = FigureCanvasTkAgg(f, master=self.master)
         self.canvas.show()
         self.canvas.get_tk_widget().grid(row=5,column=0)
+        #create new frame since toolbar automatically packs itself instead of using a grid
         self.toolbarFrame = tk.Frame(self.master)
         self.toolbarFrame.grid(row=6,column=0, sticky='news')
         toolbar = NavigationToolbar2TkAgg(self.canvas, self.toolbarFrame)
