@@ -4,6 +4,7 @@ import gym_writer
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+import matplotlib.pyplot as plt
 
 def main(): 
     root = tk.Tk()
@@ -274,10 +275,14 @@ class View_window:
         a = f.add_subplot(111)
         t = np.arange(0.0, len(gym_writer.get_wworkouts(self.controller.tkvar.get())))
         s = []
+        labels = []
         for exercise in gym_writer.get_wworkouts(self.controller.tkvar.get()):
             s.insert(0, exercise[1])
+            labels.insert(0, exercise[0])
+
 
         a.plot(t, np.array(s))
+        a.set_xticklabels(labels, rotation='vertical')
 
 
         # a tk.DrawingArea
