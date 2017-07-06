@@ -1,5 +1,6 @@
 """sqlite database"""
 import sqlite3
+import random
 
 
 def create_connection(db_file):
@@ -203,6 +204,23 @@ def get_exercises():
         s.add(ex[0])
     conn.close()
     return s
+
+def populate(strn, count):
+    #method meant for filling in values for testing
+    #param strn: name of exercise to populate
+    #param count: number of exercises to insert
+    years = ['2017', '2018', '2019', '2020']
+    months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+    days = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
+        '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28']
+    conn = create_connection("gym_data.db")
+    for i in range(count):
+        date = random.choice(years) + '-' + random.choice(months) + '-' + random.choice(days)
+        exercise = (date, random.randint(1, 100), random.randint(1, 10), random.randint(1, 10))
+        with conn:
+            insert_exercise(conn, exercise, strn)
+    conn.close()
+
 
 
 

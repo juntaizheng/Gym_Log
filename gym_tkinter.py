@@ -255,6 +255,7 @@ class View_window:
         self.tree.column('Sets', anchor='center', width=100)
         self.tree.heading('Reps', text='Reps')
         self.tree.column('Reps', anchor='center', width=100)
+        gym_writer.populate(self.controller.tkvar.get(), 10)
         #defaults to viewing most recent exercises
         for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
             self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
@@ -271,6 +272,8 @@ class View_window:
         self.b3 = ttk.Button(self.master, text='Order by least weight', command=self.light)
         self.b3.grid(row = 4, column = 1, sticky = 'news')
 
+
+        #todo: restrict x ticks to only interesting points
         f = Figure(figsize=(5, 4), dpi=100)
         a = f.add_subplot(111)
         t = np.arange(0.0, len(gym_writer.get_wworkouts(self.controller.tkvar.get())))
@@ -284,14 +287,9 @@ class View_window:
             temp.append(counter)
             counter += 1
 
-        print(s)
-        print(labels)
-
-
         a.plot(t, np.array(s))
         a.set_xticks(temp)
         a.set_xticklabels(labels)#, rotation='vertical')
-
 
         # a tk.DrawingArea
         self.canvas = FigureCanvasTkAgg(f, master=self.master)
