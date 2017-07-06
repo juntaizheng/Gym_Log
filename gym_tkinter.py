@@ -276,13 +276,21 @@ class View_window:
         t = np.arange(0.0, len(gym_writer.get_wworkouts(self.controller.tkvar.get())))
         s = []
         labels = []
-        for exercise in gym_writer.get_wworkouts(self.controller.tkvar.get()):
+        temp = []
+        counter = 0
+        for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
             s.insert(0, exercise[1])
             labels.insert(0, exercise[0])
+            temp.append(counter)
+            counter += 1
+
+        print(s)
+        print(labels)
 
 
         a.plot(t, np.array(s))
-        a.set_xticklabels(labels, rotation='vertical')
+        a.set_xticks(temp)
+        a.set_xticklabels(labels)#, rotation='vertical')
 
 
         # a tk.DrawingArea
