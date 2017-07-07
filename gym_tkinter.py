@@ -255,7 +255,7 @@ class View_window:
         self.tree.column('Sets', anchor='center', width=100)
         self.tree.heading('Reps', text='Reps')
         self.tree.column('Reps', anchor='center', width=100)
-        gym_writer.populate(self.controller.tkvar.get(), 10)
+        #gym_writer.populate(self.controller.tkvar.get(), 10)
         #defaults to viewing most recent exercises
         for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
             self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
@@ -272,7 +272,9 @@ class View_window:
         self.b3 = ttk.Button(self.master, text='Order by least weight', command=self.light)
         self.b3.grid(row = 4, column = 1, sticky = 'news')
         self.b4 = ttk.Button(self.master, text='test clear', command=self.test_clear)
-        self.b4.grid(row = 5, column = 1, sticky = 'news')
+        self.b4.grid(row = 6, column = 1, sticky = 'news')
+        self.b5 = ttk.Button(self.master, text='test populate', command=self.test_populate)
+        self.b5.grid(row = 7, column = 1, sticky = 'news')
 
 
         #todo: restrict x ticks to only interesting points
@@ -306,7 +308,82 @@ class View_window:
         self.canvas._tkcanvas.grid(row=5,column=0)
 
     def test_clear(self):
+        #test method meant to clear current table
         gym_writer.clear_table(self.controller.tkvar.get())
+        f = Figure(figsize=(5, 4), dpi=100)
+        a = f.add_subplot(111)
+        t = np.arange(0.0, len(gym_writer.get_wworkouts(self.controller.tkvar.get())))
+        s = []
+        labels = []
+        temp = []
+        counter = 0
+        for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
+            s.insert(0, exercise[1])
+            labels.insert(0, exercise[0])
+            temp.append(counter)
+            counter += 1
+
+        a.plot(t, np.array(s))
+        a.set_xticks(temp)
+        a.set_xticklabels(labels)#, rotation='vertical')
+
+        self.tree.delete(*self.tree.get_children())
+        for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
+            self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
+                                 exercise[2], exercise[3]))
+        self.order =tk.Label(self.master, text="Ordered by: \nmost recent" , background="DodgerBlue3")
+        self.order.grid(row = 0, column = 1, sticky = 'news')
+
+        # a tk.DrawingArea
+        self.canvas = FigureCanvasTkAgg(f, master=self.master)
+        self.canvas.show()
+        self.canvas.get_tk_widget().grid(row=5,column=0)
+        #create new frame since toolbar automatically packs itself instead of using a grid
+        self.toolbarFrame = tk.Frame(self.master)
+        self.toolbarFrame.grid(row=6,column=0, sticky='news')
+        toolbar = NavigationToolbar2TkAgg(self.canvas, self.toolbarFrame)
+        toolbar.update()
+        toolbar.pack(side=tk.LEFT, expand=1)
+        self.canvas._tkcanvas.grid(row=5,column=0)
+
+    def test_populate(self):
+        #test method meant to populate current table
+        gym_writer.populate(self.controller.tkvar.get(), 5)
+        f = Figure(figsize=(5, 4), dpi=100)
+        a = f.add_subplot(111)
+        t = np.arange(0.0, len(gym_writer.get_wworkouts(self.controller.tkvar.get())))
+        s = []
+        labels = []
+        temp = []
+        counter = 0
+        for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
+            s.insert(0, exercise[1])
+            labels.insert(0, exercise[0])
+            temp.append(counter)
+            counter += 1
+
+        a.plot(t, np.array(s))
+        a.set_xticks(temp)
+        a.set_xticklabels(labels)#, rotation='vertical')
+
+        self.tree.delete(*self.tree.get_children())
+        for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
+            self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
+                                 exercise[2], exercise[3]))
+        self.order =tk.Label(self.master, text="Ordered by: \nmost recent" , background="DodgerBlue3")
+        self.order.grid(row = 0, column = 1, sticky = 'news')
+
+        # a tk.DrawingArea
+        self.canvas = FigureCanvasTkAgg(f, master=self.master)
+        self.canvas.show()
+        self.canvas.get_tk_widget().grid(row=5,column=0)
+        #create new frame since toolbar automatically packs itself instead of using a grid
+        self.toolbarFrame = tk.Frame(self.master)
+        self.toolbarFrame.grid(row=6,column=0, sticky='news')
+        toolbar = NavigationToolbar2TkAgg(self.canvas, self.toolbarFrame)
+        toolbar.update()
+        toolbar.pack(side=tk.LEFT, expand=1)
+        self.canvas._tkcanvas.grid(row=5,column=0)
 
 
     def mrecent(self):
