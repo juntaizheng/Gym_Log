@@ -271,6 +271,8 @@ class View_window:
         self.b2.grid(row = 3, column = 1, sticky = 'news')
         self.b3 = ttk.Button(self.master, text='Order by least weight', command=self.light)
         self.b3.grid(row = 4, column = 1, sticky = 'news')
+        self.b4 = ttk.Button(self.master, text='test clear', command=self.test_clear)
+        self.b4.grid(row = 5, column = 1, sticky = 'news')
 
 
         #todo: restrict x ticks to only interesting points
@@ -302,6 +304,9 @@ class View_window:
         toolbar.update()
         toolbar.pack(side=tk.LEFT, expand=1)
         self.canvas._tkcanvas.grid(row=5,column=0)
+
+    def test_clear(self):
+        gym_writer.clear_table(self.controller.tkvar.get())
 
 
     def mrecent(self):

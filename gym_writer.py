@@ -96,20 +96,15 @@ def create_string(exercise):
 def create_exercise(exercise):
     """
     Opens a new connection to the database and creates a table
-    for the exercise. also adds the exercise to the overall table.
+    for the exercise. Also adds the exercise to the overall table.
     """
     conn = create_connection("gym_data.db")
     if conn is not None:
-        #tb_exists = "SELECT name FROM sqlite_master WHERE type='table' AND name='spwords'"
-        #if not conn.execute(tb_exists).fetchone():
         create_table(conn, create_string(exercise.lower().replace(" ", "_")))
-        #else:
-        #return False
     with conn:
         insert_overall(conn, (exercise, None, None, None, None
                                 , None, None, None))
     conn.close()
-    #return True
 
 def table_max(exercise):
     #returns max weight data of exercise
@@ -206,7 +201,7 @@ def get_exercises():
     return s
 
 def populate(strn, count):
-    #method meant for filling in values for testing
+    #method that fills in values of a table for testing
     #param strn: name of exercise to populate
     #param count: number of exercises to insert
     years = ['2017', '2018', '2019', '2020']
@@ -220,6 +215,16 @@ def populate(strn, count):
         with conn:
             insert_exercise(conn, exercise, strn)
     conn.close()
+
+def clear_table(strn):
+    #method that clears a table for testing
+    #param strn: name of exercise table to clear
+    conn = create_connection('gym_data.db')
+    cursor = conn.cursor()
+    cursor.execute(('''DROP TABLE ''' + strn))
+    create_table(conn, create_string(strn))
+    conn.close()
+
 
 
 
