@@ -245,6 +245,7 @@ class View_window:
         self.master.grid_columnconfigure(0, weight = 1)
         self.treeScroll = ttk.Scrollbar(self.master)
         self.treeScroll.configure(command=self.tree.yview)
+        self.treeScroll.grid(row=0, column=1, rowspan=5, sticky = 'news',)
         self.tree.configure(yscrollcommand=self.treeScroll.set)
         self.tree['columns'] = ('Weight', 'Sets', 'Reps')
         self.tree.heading("#0", text='Date', anchor='w')
@@ -261,20 +262,20 @@ class View_window:
             self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
                                  exercise[2], exercise[3]))
         self.order =tk.Label(self.master, text="Ordered by: \nmost recent" , background="DodgerBlue3")
-        self.order.grid(row = 0, column = 1, sticky = 'news')
+        self.order.grid(row = 0, column = 2, sticky = 'news')
 
         self.b0 = ttk.Button(self.master, text='Order by most recent', command=self.mrecent)
-        self.b0.grid(row = 1, column = 1, sticky = 'news')
+        self.b0.grid(row = 1, column = 2, sticky = 'news')
         self.b1 = ttk.Button(self.master, text='Order by least recent', command=self.lrecent)
-        self.b1.grid(row = 2, column = 1, sticky = 'news')
+        self.b1.grid(row = 2, column = 2, sticky = 'news')
         self.b2 = ttk.Button(self.master, text='Order by greatest weight', command=self.heavy)
-        self.b2.grid(row = 3, column = 1, sticky = 'news')
+        self.b2.grid(row = 3, column = 2, sticky = 'news')
         self.b3 = ttk.Button(self.master, text='Order by least weight', command=self.light)
-        self.b3.grid(row = 4, column = 1, sticky = 'news')
+        self.b3.grid(row = 4, column = 2, sticky = 'news')
         self.b4 = ttk.Button(self.master, text='test clear', command=self.test_clear)
-        self.b4.grid(row = 6, column = 1, sticky = 'news')
+        self.b4.grid(row = 6, column = 2, sticky = 'news')
         self.b5 = ttk.Button(self.master, text='test populate', command=self.test_populate)
-        self.b5.grid(row = 7, column = 1, sticky = 'news')
+        self.b5.grid(row = 7, column = 2, sticky = 'news')
 
 
         #todo: restrict x ticks to only interesting points
@@ -332,7 +333,7 @@ class View_window:
             self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
                                  exercise[2], exercise[3]))
         self.order =tk.Label(self.master, text="Ordered by: \nmost recent" , background="DodgerBlue3")
-        self.order.grid(row = 0, column = 1, sticky = 'news')
+        self.order.grid(row = 0, column = 2, sticky = 'news')
 
         # a tk.DrawingArea
         self.canvas = FigureCanvasTkAgg(f, master=self.master)
@@ -371,7 +372,7 @@ class View_window:
             self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
                                  exercise[2], exercise[3]))
         self.order =tk.Label(self.master, text="Ordered by: \nmost recent" , background="DodgerBlue3")
-        self.order.grid(row = 0, column = 1, sticky = 'news')
+        self.order.grid(row = 0, column = 2, sticky = 'news')
 
         # a tk.DrawingArea
         self.canvas = FigureCanvasTkAgg(f, master=self.master)
