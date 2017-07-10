@@ -6,7 +6,8 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 import matplotlib.pyplot as plt
 
-def main(): 
+def main():
+    #main function 
     root = tk.Tk()
     if len(gym_writer.get_exercises()) == 0:
         gym_writer.initialize()
@@ -17,20 +18,26 @@ def main():
 class Home:
     #main home page of application, combined as a controller
     def __init__(self, master):
+        #function for initializing home window
+        #param master: tk.Tk() instance
         self.master = master
+        #setting up frame
         self.frame = tk.Frame(self.master)
         self.frame.configure(background="DodgerBlue3")
         self.frame.grid(column=0,row=0, sticky='news')
         self.frame.columnconfigure(0, weight = 1)
         self.frame.rowconfigure(0, weight = 1)
+        #setting up variable to track current input
         self.tkvar = tk.StringVar(master)
         self.choices = gym_writer.get_exercises()
         self.tkvar.set(sorted(self.choices)[0]) # set the default option
+        #setting up dropdown menu
         self.popupMenu = ttk.OptionMenu(self.frame, self.tkvar, self.tkvar.get(), *sorted(self.choices))
         self.popupMenu["menu"].configure(background="snow")
         tk.Label(self.frame, text="Choose an exercise", background="DodgerBlue3").grid(row = 0, column = 0)
         self.popupMenu.grid(row = 1, column = 0)
 
+        #setting up buttons
         self.B1 = ttk.Button(self.frame, text='Create new exercise', command=self.new_ex_window)
         self.B1.grid(row = 6, column = 0)
 
@@ -40,6 +47,7 @@ class Home:
         self.B0 = ttk.Button(self.frame, text='View log', command=self.new_view_window)
         self.B0.grid(row = 2, column = 0, pady = (10,0))
 
+        #setting up labels for interesting statistics
         tk.Label(self.frame, text="Last time exercised", background="DodgerBlue3").grid(row = 0, column = 1)
         self.L1 = tk.Label(self.frame, background="DodgerBlue3")
         self.L1.grid(row = 1, column = 1)
@@ -78,8 +86,8 @@ class Home:
         # link function to change dropdown
         self.tkvar.trace('w', self.refresh)
 
-    # on change dropdown value or logging new exercise, refreshes the values on the home window
     def refresh(self, *args):
+        #on change dropdown value or logging new exercise, refreshes the values on the home window
         recent_query = gym_writer.table_recent(self.tkvar.get().lower().replace(" ", "_"))
         max_query = gym_writer.table_max(self.tkvar.get().lower().replace(" ", "_"))
         if recent_query is not None:
@@ -91,6 +99,7 @@ class Home:
             self.L6.config(text=str(max_query[1]) + ' lb')
             self.L7.config(text=max_query[2])
             self.L8.config(text=max_query[3])
+        #if no values have been initiated yet for the exercise
         else:
             self.L1.config(text='---')
             self.L2.config(text='---')
@@ -101,6 +110,7 @@ class Home:
             self.L7.config(text='---')
             self.L8.config(text='---')
 
+    #functions meant for creating new windows
     def new_log_window(self):
         self.newLogWindow = tk.Toplevel(self.master)
         self.app1 = Log_window(self.newLogWindow, self)
@@ -113,18 +123,24 @@ class Home:
 
 
 class Log_window:
+    #class for window that allows user to log exercises
     def __init__(self, master, controller):
+        #function for initializing a log window
+        #param master: tk.Toplevel instance based off the tk.Tk() instance
+        #param controller: Home class, containing data to be used
         self.master = master
         self.controller = controller
+        #setting up frame
         self.frame = tk.Frame(self.master)
         self.master.geometry('300x300')
         self.master.configure(background = "DodgerBlue3")
+        #setting up widgets inculding labels and dropdown menu for exercise
         tk.Label(self.master, text="Exercise Name", background="DodgerBlue3").grid(row = 0, column = 0)
+        tk.Label(self.master, text="Choose an exercise", background="DodgerBlue3").grid(row = 0, column = 0)
         self.temp = tk.StringVar(self.master)
         self.temp.set(controller.tkvar.get())
         self.popupMenu = ttk.OptionMenu(self.master, self.temp, self.temp.get(), *sorted(controller.choices))
         self.popupMenu["menu"].configure(background="snow")
-        tk.Label(self.master, text="Choose an exercise", background="DodgerBlue3").grid(row = 0, column = 0)
         self.popupMenu.grid(row = 1, column = 0)
 
         #dropdown for year selections
@@ -153,12 +169,12 @@ class Log_window:
         tk.Label(self.frame, text="Day", background="DodgerBlue3").grid(row = 0, column = 3)
         self.dayTemp = tk.StringVar(self.master)
         self.dayTemp.set('--')
-        #global dayMenu
         self.dayMenu = ttk.OptionMenu(self.master, self.dayTemp, self.dayTemp.get(), *sorted(self.day))
         self.dayMenu["menu"].configure(background="snow")
         self.dayMenu.grid(row = 1, column = 3, padx = 2, pady = 2)
         self.dayMenu.configure(width=3)
 
+        #labels and entries for inputting weight, sets and reps
         tk.Label(self.master, text="Weight (lb)", background="DodgerBlue3").grid(row = 4, column = 0)
         self.weight = tk.StringVar()
         self.E2 = tk.Entry(self.master, textvariable=self.weight)
@@ -174,6 +190,7 @@ class Log_window:
         self.E4 = tk.Entry(self.master, textvariable=self.reps)
         self.E4.grid(row= 9, column= 0, columnspan= 2)
 
+        #confirm and cancel buttons
         self.con = ttk.Button(self.master, text="Confirm", command=self.log, state='disabled')
         self.con.grid(row=10, column=0, padx = 2, pady = 2)
         self.canc = ttk.Button(self.master, text="Cancel", command=self.master.destroy)
@@ -195,7 +212,7 @@ class Log_window:
         #logs the current exercise
         gym_writer.log_ex((self.yearTemp.get() + '-' + self.monthTemp.get() + '-' + self.dayTemp.get(),
             self.E2.get(), self.E3.get(), self.E4.get()), self.temp.get().lower())
-        #refreshes the overall values if needed
+        #refreshes the overall values
         self.controller.refresh()
         self.master.destroy()
 
@@ -208,24 +225,27 @@ class Log_window:
 
     def day_update(self, *args):
         #updates the day selection available with a selected self.month
-        #global dayMenu
         self.dayTemp.set('')
         self.days = set()
         self.dayMenu['menu'].delete(0, 'end')
         if self.monthTemp.get() == '02' and self.yearTemp.get().isdigit() and int(self.yearTemp.get()) % 4 == 0:
-            #leap year
+            #accounts for leap year
             self.days = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
             '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29'};
         elif self.monthTemp.get() == '01' or self.monthTemp.get() == '03' or self.monthTemp.get() == '05' or self.monthTemp.get() == '07' or self.monthTemp.get() == '08' or self.monthTemp.get() == '10' or self.monthTemp.get() == '12':
+            #months with 31 days
             self.days = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
             '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'}
         elif self.monthTemp.get() == '02':
+            #non-leap year February
             self.days = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
             '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28'}
         else:
+            #months with 30 days
             self.days = {'--', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', 
             '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'}
 
+        #refreshes the day dropdown menu
         self.dayMenu = ttk.OptionMenu(self.master, self.dayTemp, '--', *sorted(self.days))
         self.dayMenu["menu"].configure(background="snow")
         self.dayMenu.grid(row = 1, column = 3, padx = 2, pady = 2)
@@ -233,20 +253,22 @@ class Log_window:
 
 
 class View_window:
+    #class for view window
     def __init__(self, master, controller):
+        #function for initializiing viewing window
+        #param master: tk.Toplevel instance based off the tk.Tk() instance
+        #param controller: Home class, containing data to be used
         self.master = master
         self.controller = controller
+        #setting up frame
         self.frame = tk.Frame(self.master)
         self.master.configure(background = "DodgerBlue3")
+        #setting up treeview for viewing data in a table
         self.tree = ttk.Treeview(self.master)
         self.tree.grid(sticky = 'news', rowspan=5)
         self.master.treeview = self.tree
         self.master.grid_rowconfigure(0, weight = 1)
         self.master.grid_columnconfigure(0, weight = 1)
-        self.treeScroll = ttk.Scrollbar(self.master)
-        self.treeScroll.configure(command=self.tree.yview)
-        self.treeScroll.grid(row=0, column=1, rowspan=5, sticky = 'news',)
-        self.tree.configure(yscrollcommand=self.treeScroll.set)
         self.tree['columns'] = ('Weight', 'Sets', 'Reps')
         self.tree.heading("#0", text='Date', anchor='w')
         self.tree.column("#0", anchor="w")
@@ -256,7 +278,11 @@ class View_window:
         self.tree.column('Sets', anchor='center', width=100)
         self.tree.heading('Reps', text='Reps')
         self.tree.column('Reps', anchor='center', width=100)
-        #gym_writer.populate(self.controller.tkvar.get(), 10)
+        #setting up scrollbar for treeview
+        self.treeScroll = ttk.Scrollbar(self.master)
+        self.treeScroll.configure(command=self.tree.yview)
+        self.treeScroll.grid(row=0, column=1, rowspan=5, sticky = 'news',)
+        self.tree.configure(yscrollcommand=self.treeScroll.set)
         #defaults to viewing most recent exercises
         for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
             self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
@@ -264,6 +290,7 @@ class View_window:
         self.order =tk.Label(self.master, text="Ordered by: \nmost recent" , background="DodgerBlue3")
         self.order.grid(row = 0, column = 2, sticky = 'news')
 
+        #buttons for ordering the view and testing adding and removing exercises
         self.b0 = ttk.Button(self.master, text='Order by most recent', command=self.mrecent)
         self.b0.grid(row = 1, column = 2, sticky = 'news')
         self.b1 = ttk.Button(self.master, text='Order by least recent', command=self.lrecent)
@@ -279,6 +306,7 @@ class View_window:
 
 
         #todo: restrict x ticks to only interesting points
+        #using matplotlib to plot a graph of the data points
         f = Figure(figsize=(5, 4), dpi=100)
         a = f.add_subplot(111)
         t = np.arange(0.0, len(gym_writer.get_wworkouts(self.controller.tkvar.get())))
@@ -294,9 +322,9 @@ class View_window:
 
         a.plot(t, np.array(s))
         a.set_xticks(temp)
-        a.set_xticklabels(labels)#, rotation='vertical')
+        a.set_xticklabels(labels)#, rotation='vertical') can set dates on x axis to be vertical
 
-        # a tk.DrawingArea
+        #a tk.DrawingArea
         self.canvas = FigureCanvasTkAgg(f, master=self.master)
         self.canvas.show()
         self.canvas.get_tk_widget().grid(row=5,column=0)
@@ -329,10 +357,11 @@ class View_window:
         a.set_xticklabels(labels)#, rotation='vertical')
 
         self.tree.delete(*self.tree.get_children())
+        #may be unecessary below this line, test without
         for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
             self.master.treeview.insert('', 'end', text=exercise[0], values=(exercise[1],
                                  exercise[2], exercise[3]))
-        self.order =tk.Label(self.master, text="Ordered by: \nmost recent" , background="DodgerBlue3")
+        self.order = tk.Label(self.master, text="Ordered by: \nmost recent" , background="DodgerBlue3")
         self.order.grid(row = 0, column = 2, sticky = 'news')
 
         # a tk.DrawingArea
@@ -422,7 +451,11 @@ class View_window:
     
         
 class Ex_window:
+    #class for creating a new window for creating a new exercise
     def __init__(self, master, controller):
+        #function for initializing an exercise creation window
+        #param master: tk.Toplevel instance based off the tk.Tk() instance
+        #param controller: Home class, containing data to be used
         self.master = master
         self.controller = controller
         self.frame = tk.Frame(self.master)
@@ -433,16 +466,19 @@ class Ex_window:
         self.E1.grid(row=1, column=0, columnspan=2)
         self.exercises = gym_writer.getTables()
 
+        #setting up confirm (disabled by default) and cancel buttons
         self.con = ttk.Button(self.master, text="Confirm", command=self.create_ex, state='disabled')
         self.con.grid(row=2, column=0, padx = 10, pady = 10)
         self.canc = ttk.Button(self.master, text="Cancel", command=self.master.destroy)
         self.canc.grid(row=2, column=1, padx = 10, pady = 10)
 
+        #set up confirm button to be traced with changes to the exercise entry
         self.ex.trace('w', self.disable)
 
     def disable(self, *args):  
     #disables confirm button if entry is empty or whitespace
         if self.E1.get() == '' or self.E1.get().isspace() or self.E1.get().isdigit():
+            #checks for whitespace only, empty, or a number (breaks sqlite)
             self.con.config(state='disabled')
         else:
             self.con.config(state='normal')
@@ -450,6 +486,7 @@ class Ex_window:
     def create_ex(self):
     #function for creating a new exercise; rejection if exercise already exists
         if self.E1.get().lower().replace(" ", "_") in self.exercises:
+            #creates popup for invalid, duplicated exercise
             pop = tk.Toplevel()
             pop.configure(background = "DodgerBlue3")
             tk.Label(pop, text="Error! Exercise already exists.", background="DodgerBlue3").grid(row = 0, column = 0, sticky='news', columnspan = 2, padx = 10, pady = 10)
@@ -470,6 +507,6 @@ class Ex_window:
         
 
 
-
+#run the program!
 if __name__ == '__main__':
     main()
