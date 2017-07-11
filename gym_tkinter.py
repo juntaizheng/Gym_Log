@@ -314,9 +314,21 @@ class View_window:
         labels = []
         temp = []
         counter = 0
+        #two counters keeping track of min and max weights on graph
+        max = (0, 0)
+        min = (999999, 0)
         for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
             s.insert(0, exercise[1])
-            labels.insert(0, exercise[0])
+            if exercise[1] > max[0]:
+                labels.insert(0, exercise[0])
+                labels[len(labels)-1-max[1]] = ''
+                max = (exercise[1], counter)
+            elif exercise[1] < min[0]:
+                labels.insert(0, exercise[0])
+                labels[len(labels)-1-min[1]] = ''
+                min = (exercise[1], counter)
+            else:
+                labels.insert(0, '')
             temp.append(counter)
             counter += 1
 
@@ -346,9 +358,21 @@ class View_window:
         labels = []
         temp = []
         counter = 0
+        #two counters keeping track of min and max weights on graph
+        max = (0, 0)
+        min = (999999, 0)
         for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
             s.insert(0, exercise[1])
-            labels.insert(0, exercise[0])
+            if exercise[1] > max[0]:
+                labels.insert(0, exercise[0])
+                labels[len(labels)-1-max[1]] = ''
+                max = (exercise[1], counter)
+            elif exercise[1] < min[0]:
+                labels.insert(0, exercise[0])
+                labels[len(labels)-1-min[1]] = ''
+                min = (exercise[1], counter)
+            else:
+                labels.insert(0, '')
             temp.append(counter)
             counter += 1
 
@@ -386,9 +410,21 @@ class View_window:
         labels = []
         temp = []
         counter = 0
+        #two counters keeping track of min and max weights on graph
+        max = (0, 0)
+        min = (999999, 0)
         for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
             s.insert(0, exercise[1])
-            labels.insert(0, exercise[0])
+            if exercise[1] > max[0]:
+                labels.insert(0, exercise[0])
+                labels[len(labels)-1-max[1]] = ''
+                max = (exercise[1], counter)
+            elif exercise[1] < min[0]:
+                labels.insert(0, exercise[0])
+                labels[len(labels)-1-min[1]] = ''
+                min = (exercise[1], counter)
+            else:
+                labels.insert(0, '')
             temp.append(counter)
             counter += 1
 
