@@ -304,81 +304,13 @@ class View_window:
         self.b5 = ttk.Button(self.master, text='test populate', command=self.test_populate)
         self.b5.grid(row = 7, column = 2, sticky = 'news')
 
-
-        #todo: restrict x ticks to only interesting points
         #using matplotlib to plot a graph of the data points
-        f = Figure(figsize=(5, 4), dpi=100)
-        a = f.add_subplot(111)
-        t = np.arange(0.0, len(gym_writer.get_wworkouts(self.controller.tkvar.get())))
-        s = []
-        labels = []
-        temp = []
-        counter = 0
-        #two counters keeping track of min and max weights on graph
-        max = (0, 0)
-        min = (999999, 0)
-        for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
-            s.insert(0, exercise[1])
-            if exercise[1] > max[0]:
-                labels.insert(0, exercise[0])
-                labels[len(labels)-1-max[1]] = ''
-                max = (exercise[1], counter)
-            elif exercise[1] < min[0]:
-                labels.insert(0, exercise[0])
-                labels[len(labels)-1-min[1]] = ''
-                min = (exercise[1], counter)
-            else:
-                labels.insert(0, '')
-            temp.append(counter)
-            counter += 1
-
-        a.plot(t, np.array(s))
-        a.set_xticks(temp)
-        a.set_xticklabels(labels)#, rotation='vertical') can set dates on x axis to be vertical
-
-        #a tk.DrawingArea
-        self.canvas = FigureCanvasTkAgg(f, master=self.master)
-        self.canvas.show()
-        self.canvas.get_tk_widget().grid(row=5,column=0)
-        #create new frame since toolbar automatically packs itself instead of using a grid
-        self.toolbarFrame = tk.Frame(self.master)
-        self.toolbarFrame.grid(row=6,column=0, sticky='news')
-        toolbar = NavigationToolbar2TkAgg(self.canvas, self.toolbarFrame)
-        toolbar.update()
-        toolbar.pack(side=tk.LEFT, expand=1)
-        self.canvas._tkcanvas.grid(row=5,column=0)
+        self.create_figure()
 
     def test_clear(self):
         #test method meant to clear current table
         gym_writer.clear_table(self.controller.tkvar.get())
-        f = Figure(figsize=(5, 4), dpi=100)
-        a = f.add_subplot(111)
-        t = np.arange(0.0, len(gym_writer.get_wworkouts(self.controller.tkvar.get())))
-        s = []
-        labels = []
-        temp = []
-        counter = 0
-        #two counters keeping track of min and max weights on graph
-        max = (0, 0)
-        min = (999999, 0)
-        for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
-            s.insert(0, exercise[1])
-            if exercise[1] > max[0]:
-                labels.insert(0, exercise[0])
-                labels[len(labels)-1-max[1]] = ''
-                max = (exercise[1], counter)
-            elif exercise[1] < min[0]:
-                labels.insert(0, exercise[0])
-                labels[len(labels)-1-min[1]] = ''
-                min = (exercise[1], counter)
-            else:
-                labels.insert(0, '')
-            temp.append(counter)
-            counter += 1
-
-        a.plot(t, np.array(s))
-        a.set_xticks(temp)
-        a.set_xticklabels(labels)#, rotation='vertical')
+        self.create_figure()
 
         self.tree.delete(*self.tree.get_children())
         #may be unecessary below this line, test without
@@ -388,49 +320,10 @@ class View_window:
         self.order = tk.Label(self.master, text="Ordered by: \nmost recent" , background="DodgerBlue3")
         self.order.grid(row = 0, column = 2, sticky = 'news')
 
-        # a tk.DrawingArea
-        self.canvas = FigureCanvasTkAgg(f, master=self.master)
-        self.canvas.show()
-        self.canvas.get_tk_widget().grid(row=5,column=0)
-        #create new frame since toolbar automatically packs itself instead of using a grid
-        self.toolbarFrame = tk.Frame(self.master)
-        self.toolbarFrame.grid(row=6,column=0, sticky='news')
-        toolbar = NavigationToolbar2TkAgg(self.canvas, self.toolbarFrame)
-        toolbar.update()
-        toolbar.pack(side=tk.LEFT, expand=1)
-        self.canvas._tkcanvas.grid(row=5,column=0)
-
     def test_populate(self):
         #test method meant to populate current table
         gym_writer.populate(self.controller.tkvar.get(), 5)
-        f = Figure(figsize=(5, 4), dpi=100)
-        a = f.add_subplot(111)
-        t = np.arange(0.0, len(gym_writer.get_wworkouts(self.controller.tkvar.get())))
-        s = []
-        labels = []
-        temp = []
-        counter = 0
-        #two counters keeping track of min and max weights on graph
-        max = (0, 0)
-        min = (999999, 0)
-        for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
-            s.insert(0, exercise[1])
-            if exercise[1] > max[0]:
-                labels.insert(0, exercise[0])
-                labels[len(labels)-1-max[1]] = ''
-                max = (exercise[1], counter)
-            elif exercise[1] < min[0]:
-                labels.insert(0, exercise[0])
-                labels[len(labels)-1-min[1]] = ''
-                min = (exercise[1], counter)
-            else:
-                labels.insert(0, '')
-            temp.append(counter)
-            counter += 1
-
-        a.plot(t, np.array(s))
-        a.set_xticks(temp)
-        a.set_xticklabels(labels)#, rotation='vertical')
+        self.create_figure()
 
         self.tree.delete(*self.tree.get_children())
         for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
@@ -438,18 +331,6 @@ class View_window:
                                  exercise[2], exercise[3]))
         self.order =tk.Label(self.master, text="Ordered by: \nmost recent" , background="DodgerBlue3")
         self.order.grid(row = 0, column = 2, sticky = 'news')
-
-        # a tk.DrawingArea
-        self.canvas = FigureCanvasTkAgg(f, master=self.master)
-        self.canvas.show()
-        self.canvas.get_tk_widget().grid(row=5,column=0)
-        #create new frame since toolbar automatically packs itself instead of using a grid
-        self.toolbarFrame = tk.Frame(self.master)
-        self.toolbarFrame.grid(row=6,column=0, sticky='news')
-        toolbar = NavigationToolbar2TkAgg(self.canvas, self.toolbarFrame)
-        toolbar.update()
-        toolbar.pack(side=tk.LEFT, expand=1)
-        self.canvas._tkcanvas.grid(row=5,column=0)
 
 
     def mrecent(self):
@@ -484,6 +365,49 @@ class View_window:
                              exercise[2], exercise[3]))
         self.order.configure(text = "Ordered by: \nlowest weight")
 
+    def create_figure(self):
+        #todo: create y axis ticks for interesting points corresponding with the x axis
+        #for creating the matplotlib figure graph
+        f = Figure(figsize=(5, 4), dpi=100)
+        a = f.add_subplot(111)
+        t = np.arange(0.0, len(gym_writer.get_wworkouts(self.controller.tkvar.get())))
+        s = []
+        labels = []
+        temp = []
+        counter = 0
+        #two counters keeping track of min and max weights on graph
+        max = (0, 0)
+        min = (999999, 0)
+        for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
+            s.insert(0, exercise[1])
+            if exercise[1] > max[0]:
+                labels.insert(0, exercise[0])
+                labels[len(labels)-1-max[1]] = ''
+                max = (exercise[1], counter)
+            elif exercise[1] < min[0]:
+                labels.insert(0, exercise[0])
+                labels[len(labels)-1-min[1]] = ''
+                min = (exercise[1], counter)
+            else:
+                labels.insert(0, '')
+            temp.append(counter)
+            counter += 1
+        
+        a.plot(t, np.array(s))
+        a.set_xticks(temp)
+        a.set_xticklabels(labels)#, rotation='vertical')
+
+        #a tk.DrawingArea
+        self.canvas = FigureCanvasTkAgg(f, master=self.master)
+        self.canvas.show()
+        self.canvas.get_tk_widget().grid(row=5,column=0)
+        #create new frame since toolbar automatically packs itself instead of using a grid
+        self.toolbarFrame = tk.Frame(self.master)
+        self.toolbarFrame.grid(row=6,column=0, sticky='news')
+        toolbar = NavigationToolbar2TkAgg(self.canvas, self.toolbarFrame)
+        toolbar.update()
+        toolbar.pack(side=tk.LEFT, expand=1)
+        self.canvas._tkcanvas.grid(row=5,column=0)
     
         
 class Ex_window:
