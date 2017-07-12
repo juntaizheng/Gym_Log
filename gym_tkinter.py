@@ -307,6 +307,15 @@ class View_window:
         #using matplotlib to plot a graph of the data points
         self.create_figure()
 
+        self.auxFrame = tk.Frame(self.master)
+        self.auxFrame.grid(row = 5, column = 2, sticky = 's')
+        self.auxFrame.configure(background="DodgerBlue3")
+        self.newer = ttk.Button(self.auxFrame, text='Newer 5', command=self.test_populate)
+        self.newer.grid(sticky = 's')
+        self.older = ttk.Button(self.auxFrame, text='Older 5', command=self.test_populate)
+        self.older.grid(row = 0, column = 1, sticky = 's')
+
+
     def test_clear(self):
         #test method meant to clear current table
         gym_writer.clear_table(self.controller.tkvar.get())
