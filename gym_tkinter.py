@@ -307,6 +307,8 @@ class View_window:
         #using matplotlib to plot a graph of the data points
         self.create_figure()
 
+        #creates frame and buttons for shifting date view of graph
+        #todo: implement logic of buttons in here and in create figure view
         self.auxFrame = tk.Frame(self.master)
         self.auxFrame.grid(row = 5, column = 2, sticky = 's')
         self.auxFrame.configure(background="DodgerBlue3")
@@ -375,7 +377,6 @@ class View_window:
         self.order.configure(text = "Ordered by: \nlowest weight")
 
     def create_figure(self):
-        #todo: create buttons to change view of graph to different 5 exercises
         #for creating the matplotlib figure graph
         f = Figure(figsize=(5, 4), dpi=100)
         a = f.add_subplot(111)
