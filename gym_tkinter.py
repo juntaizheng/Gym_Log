@@ -366,11 +366,11 @@ class View_window:
         self.order.configure(text = "Ordered by: \nlowest weight")
 
     def create_figure(self):
-        #todo: create y axis ticks for interesting points corresponding with the x axis
+        #todo: create buttons to change view of graph to different 5 exercises
         #for creating the matplotlib figure graph
         f = Figure(figsize=(5, 4), dpi=100)
         a = f.add_subplot(111)
-        t = np.arange(0.0, len(gym_writer.get_wworkouts(self.controller.tkvar.get())))
+        #t = np.arange(0.0, len(gym_writer.get_wworkouts(self.controller.tkvar.get())))
         s = []
         labels = []
         temp = []
@@ -378,24 +378,29 @@ class View_window:
         #two counters keeping track of min and max weights on graph
         max = (0, 0)
         min = (999999, 0)
+
         for exercise in gym_writer.get_dworkouts(self.controller.tkvar.get()):
+            if counter == 5:
+                break
             s.insert(0, exercise[1])
             if exercise[1] > max[0]:
                 labels.insert(0, exercise[0])
-                labels[len(labels)-1-max[1]] = ''
+                if max[1] != min[1]:
+                    labels[len(labels)-1-max[1]] = ''
                 max = (exercise[1], counter)
             elif exercise[1] < min[0]:
                 labels.insert(0, exercise[0])
-                labels[len(labels)-1-min[1]] = ''
+                if min[1] != max[1]:
+                    labels[len(labels)-1-min[1]] = ''
                 min = (exercise[1], counter)
             else:
                 labels.insert(0, '')
             temp.append(counter)
             counter += 1
-        
+        t = np.arange(0.0, len(s))
         a.plot(t, np.array(s))
         a.set_xticks(temp)
-        a.set_xticklabels(labels)#, rotation='vertical')
+        a.set_xticklabels(labels, rotation=30, fontsize=6)
 
         #a tk.DrawingArea
         self.canvas = FigureCanvasTkAgg(f, master=self.master)
