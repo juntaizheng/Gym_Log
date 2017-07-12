@@ -7,7 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 import matplotlib.pyplot as plt
 
 def main():
-    #main function 
+    #main function for loading the program
     root = tk.Tk()
     if len(gym_writer.get_exercises()) == 0:
         gym_writer.initialize()

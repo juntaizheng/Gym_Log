@@ -25,13 +25,13 @@ def create_table(conn, create_table_sql):
         print(err)
 
 def getTables():
-   #Get a list of all tables
-   conn = create_connection("gym_data.db")
-   cursor = conn.cursor()
-   cmd = "SELECT name FROM sqlite_master WHERE type='table'"
-   cursor.execute(cmd)
-   names = [row[0] for row in cursor.fetchall()]
-   return names
+    #Get a list of all tables
+    conn = create_connection("gym_data.db")
+    cursor = conn.cursor()
+    cmd = "SELECT name FROM sqlite_master WHERE type='table'"
+    cursor.execute(cmd)
+    names = [row[0] for row in cursor.fetchall()]
+    return names
 
 def get_dworkouts(exercise):
     #gets all the logged workouts of a specific exercise by date in descending order
