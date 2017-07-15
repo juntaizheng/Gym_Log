@@ -312,7 +312,7 @@ class View_window:
         self.auxFrame = tk.Frame(self.master)
         self.auxFrame.grid(row = 5, column = 2, sticky = 's')
         self.auxFrame.configure(background="DodgerBlue3")
-        self.newer = ttk.Button(self.auxFrame, text='Newer 5', command=self.test_populate)
+        self.newer = ttk.Button(self.auxFrame, text='Newer 5', command=self.shift_later)
         self.newer.grid(sticky = 's')
         self.older = ttk.Button(self.auxFrame, text='Older 5', command=self.shift_earlier)
         self.older.grid(row = 0, column = 1, sticky = 's')
@@ -486,8 +486,69 @@ class View_window:
         toolbar.update()
         toolbar.pack(side=tk.LEFT, expand=1)
         self.canvas._tkcanvas.grid(row=5,column=0)
-        
-        print(self.current_index)
+        #print("shift earlier: " + str(self.current_index))
+
+    def shift_later(self):
+        #for shifting the graph's view to the next five later dates
+        f = Figure(figsize=(5, 4), dpi=100)
+        a = f.add_subplot(111)
+        def my_range(start, end, step):
+            while start <= end:
+                yield start
+                start += step
+    
+        counter = 0
+        end = self.current_index
+        self.current_index = self.current_index - 5
+        if end < 0:
+            end = 0
+        if self.current_index < 0:
+            self.current_index = 0
+            print('short circuit')
+            return
+        #two counters keeping track of min and max weights on graph
+        max = (0, 0)
+        min = (999999, 0)
+        s = []
+        labels = []
+        temp = []
+        counter = 0
+        for x in my_range(self.current_index, end, 1):
+            if counter == 5:
+                break
+            s.insert(0, self.dexercise[x][1])
+            if self.dexercise[x][1] > max[0]:
+                labels.insert(0, self.dexercise[x][0])
+                if max[1] != min[1]:
+                    labels[len(labels)-1-max[1]] = ''
+                max = (self.dexercise[x][1], counter)
+            elif self.dexercise[x][1] < min[0]:
+                labels.insert(0, self.dexercise[x][0])
+                if min[1] != max[1]:
+                    labels[len(labels)-1-min[1]] = ''
+                min = (self.dexercise[x][1], counter)
+            else:
+                labels.insert(0, '')
+            temp.append(counter)
+            counter += 1
+        t = np.arange(0.0, len(s))
+        a.plot(t, np.array(s))
+        a.set_xticks(temp)
+        a.set_xticklabels(labels, rotation=30, fontsize=6)
+
+        #a tk.DrawingArea
+        self.canvas = FigureCanvasTkAgg(f, master=self.master)
+        self.canvas.show()
+        self.canvas.get_tk_widget().grid(row=5,column=0)
+        #create new frame since toolbar automatically packs itself instead of using a grid
+        self.toolbarFrame = tk.Frame(self.master)
+        self.toolbarFrame.grid(row=6,column=0, sticky='news')
+        toolbar = NavigationToolbar2TkAgg(self.canvas, self.toolbarFrame)
+        toolbar.update()
+        toolbar.pack(side=tk.LEFT, expand=1)
+        self.canvas._tkcanvas.grid(row=5,column=0)
+        #print("shift later: " + str(self.current_index))
+        #print("shift later end: " + str(self.current_index))
 
 
         
